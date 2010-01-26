@@ -52,45 +52,59 @@ public class FilterBuilder extends VerticalPanel {
 	Loader<ListLoadResult<ModelData>> loader;
 
 	public FilterBuilder(List<FilterField> fields_) {
+		this(fields_, true);
+	}
+
+	public FilterBuilder(List<FilterField> fields_, boolean showButtons) {
 		filterPanel = new FilterPanel(fields_);
 		this.add(filterPanel);
+		if (showButtons) {
+			HorizontalPanel temp = new HorizontalPanel();
+			Button filterButton = new Button("Filter");
+			filterButton.setWidth(150);
+			filterButton
+					.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
-		HorizontalPanel temp = new HorizontalPanel();
-		Button filterButton = new Button("Filter");
-		filterButton.setWidth(150);
-		filterButton.addSelectionListener(new SelectionListener<ButtonEvent>() {
+						@Override
+						public void componentSelected(ButtonEvent ce) {
+							filter();
+						}
+					});
 
-			@Override
-			public void componentSelected(ButtonEvent ce) {
+			Button clearButton = new Button("X");
+			clearButton
+					.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
-				if (loader != null) {
-					BaseListLoadConfig config = new BaseListLoadConfig();
-					config.set("filter", getFilterExpression());
-					loader.load(config);
-					//store.applyFilters("");
-					
-				} else if (store != null) {
-					store.applyFilters("");
-				}
-			}
-		});
+						@Override
+						public void componentSelected(ButtonEvent ce) {
+							clearFilter();
+						}
+					});
 
-		Button clearButton = new Button("X");
-		clearButton.addSelectionListener(new SelectionListener<ButtonEvent>() {
+			temp.add(filterButton);
+			temp.add(clearButton);
+			this.add(temp);
+		}
+	}
 
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				if (loader != null) {
-					loader.load();
-				} else {
-					store.clearFilters();
-				}
-			}
-		});
+	public void clearFilter() {
+		if (loader != null) {
+			loader.load();
+		} else {
+			store.clearFilters();
+		}
+		filterPanel.setFilterExpression(new ComplexModel("AND"));
+	}
 
-		temp.add(filterButton);
-		temp.add(clearButton);
-		this.add(temp);
+	public void filter() {
+		if (loader != null) {
+			BaseListLoadConfig config = new BaseListLoadConfig();
+			config.set("filter", getFilterExpression());
+			loader.load(config);
+		} else if (store != null) {
+			store.applyFilters("");
+		}
+
 	}
 
 	public void bind(Store<ModelData> store_) {
@@ -111,9 +125,8 @@ public class FilterBuilder extends VerticalPanel {
 	public ComplexModel getFilterExpression() {
 		return filterPanel.getFilterModel();
 	}
-	
-	public void setFilterExpression(ComplexModel complexModel)
-	{
+
+	public void setFilterExpression(ComplexModel complexModel) {
 		store.clearFilters();
 		filterPanel.setFilterExpression(complexModel);
 		store.addFilter(complexModel);
