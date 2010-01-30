@@ -30,10 +30,16 @@
 package hu.bekesi.zoltan.filterBuilder.client.widgets;
 
 import hu.bekesi.zoltan.filterBuilder.client.criteria.FilterModel;
+import hu.bekesi.zoltan.filterBuilder.client.widgets.fields.FilterField;
 
 
 
 public interface Filter {
 	FilterModel getFilterModel();
 	void setFilterExpression(FilterModel complexModel);
+	
+	 void addField(FilterField field);
+	 void updateField(FilterField field);
+	 void removeField(FilterField field);
+	
 }
