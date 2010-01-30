@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.IconAlign;
+import com.extjs.gxt.ui.client.data.ModelKeyProvider;
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Events;
@@ -59,11 +60,13 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class SimplePanel extends HorizontalPanel implements Filter {
 
-	public static final FilterBuilderIcons ICONS = GWT.create(FilterBuilderIcons.class);
-	
+	public static final FilterBuilderIcons ICONS = GWT
+			.create(FilterBuilderIcons.class);
+
 	ComboBox<FilterField> combo;
 	SimpleModel model = null;
 	FilterPanel panel;
+	ListStore<FilterField> store;
 
 	public SimplePanel(final VerticalPanel verticalPanel,
 			final FilterPanel panel, List<FilterField> fields) {
@@ -72,8 +75,8 @@ public class SimplePanel extends HorizontalPanel implements Filter {
 		// model = new SimpleModel(fields.get(0).getName());
 		model = new SimpleModel(fields.get(0).getValueField());
 
-		Button minus = new Button();//"-");
-		
+		Button minus = new Button();// "-");
+
 		minus.setIcon(ICONS.delete());
 		minus.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
@@ -85,7 +88,15 @@ public class SimplePanel extends HorizontalPanel implements Filter {
 		});
 		hp.add(minus);
 
-		final ListStore<FilterField> store = new ListStore<FilterField>();
+		store = new ListStore<FilterField>();
+		store.setKeyProvider(new ModelKeyProvider<FilterField>() {
+
+			@Override
+			public String getKey(FilterField model) {
+				return model.getValueField();
+			}
+		});
+
 		store.add(fields);
 
 		combo = new ComboBox<FilterField>();
@@ -117,8 +128,9 @@ public class SimplePanel extends HorizontalPanel implements Filter {
 					@Override
 					public void selectionChanged(
 							SelectionChangedEvent<FilterField> se) {
-//						model.setField(se.getSelectedItem().getName());
-						model.setValueField(se.getSelectedItem().getValueField());
+						// model.setField(se.getSelectedItem().getName());
+						model.setValueField(se.getSelectedItem()
+								.getValueField());
 					}
 				});
 
@@ -144,7 +156,8 @@ public class SimplePanel extends HorizontalPanel implements Filter {
 	@Override
 	public void setFilterExpression(FilterModel filterModel) {
 		model = (SimpleModel) filterModel;
-		FilterField ff = combo.getStore().findModel("name", model.getValueField());
+		FilterField ff = combo.getStore().findModel("name",
+				model.getValueField());
 		// combo.select(ff);
 		combo.disableEvents(true);
 		ArrayList<FilterField> selection = new ArrayList<FilterField>();
@@ -180,5 +193,23 @@ public class SimplePanel extends HorizontalPanel implements Filter {
 
 		layout(true);
 		panel.forceLayout();
+	}
+
+	@Override
+	public void addField(FilterField field) {
+		store.add(field);
+
+	}
+
+	@Override
+	public void removeField(FilterField field) {
+		int index = store.indexOf(field);
+		store.remove(field);
+		store.insert(field, index);
+	}
+
+	@Override
+	public void updateField(FilterField field) {
+		store.remove(field);
 	}
 }

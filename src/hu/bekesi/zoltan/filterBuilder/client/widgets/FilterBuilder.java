@@ -132,4 +132,20 @@ public class FilterBuilder extends VerticalPanel {
 		store.addFilter(complexModel);
 	}
 
+	public void addField(FilterField field)
+	{
+		filterPanel.addField(field);
+	}
+	
+	public void updateField(FilterField field)
+	{
+		filterPanel.updateField(field);
+	}
+	
+	public void removeField(FilterField field)
+	{
+		filterPanel.removeField(field);
+	}
+	
+	
 }

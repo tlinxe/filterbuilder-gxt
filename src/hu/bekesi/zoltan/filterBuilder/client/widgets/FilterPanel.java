@@ -29,7 +29,6 @@
 
 package hu.bekesi.zoltan.filterBuilder.client.widgets;
 
-
 import hu.bekesi.zoltan.filterBuilder.client.criteria.ComplexModel;
 import hu.bekesi.zoltan.filterBuilder.client.criteria.FilterModel;
 import hu.bekesi.zoltan.filterBuilder.client.criteria.SimpleModel;
@@ -56,8 +55,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class FilterPanel extends HorizontalPanel implements Filter {
 
-	public static final FilterBuilderIcons ICONS = GWT.create(FilterBuilderIcons.class);
-	
+	public static final FilterBuilderIcons ICONS = GWT
+			.create(FilterBuilderIcons.class);
+
 	List<FilterField> fields;
 	FilterPanel panel;
 	FilterPanel parent;
@@ -67,10 +67,9 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 
 	SimpleComboBox<String> combo;
 
-	//ComplexModel model = new ComplexModel(BinaryOperator.AND);
+	// ComplexModel model = new ComplexModel(BinaryOperator.AND);
 	ComplexModel model = new ComplexModel("AND");
-	
-	
+
 	public void forceLayout() {
 		this.layout(true);
 		this.repaint();
@@ -99,7 +98,7 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 		horizontalPanel = new HorizontalPanel();
 
 		if (parent != null) {
-			Button minus = new Button();//"-");
+			Button minus = new Button();// "-");
 			minus.setIcon(ICONS.delete());
 
 			horizontalPanel.add(minus);
@@ -120,17 +119,18 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 		combo.add("OR");
 		combo.add("NOT");
 		combo.setSimpleValue("AND");
-		//combo.add(BinaryOperator.stringValues());
+		// combo.add(BinaryOperator.stringValues());
 
-		combo.addSelectionChangedListener(new SelectionChangedListener<SimpleComboValue<String>>() {
-			
-			@Override
-			public void selectionChanged(SelectionChangedEvent<SimpleComboValue<String>> se) {
-				//model.setOperator(BinaryOperator.getOp(se.getSelectedItem().getValue()));
-				model.setOperator(se.getSelectedItem().getValue());
-			}
-		});
-		
+		combo
+				.addSelectionChangedListener(new SelectionChangedListener<SimpleComboValue<String>>() {
+
+					@Override
+					public void selectionChanged(
+							SelectionChangedEvent<SimpleComboValue<String>> se) {
+						// model.setOperator(BinaryOperator.getOp(se.getSelectedItem().getValue()));
+						model.setOperator(se.getSelectedItem().getValue());
+					}
+				});
 
 		horizontalPanel.add(combo);
 
@@ -138,13 +138,12 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 		SimplePanel sp = new SimplePanel(verticalPanel, panel, fields);
 		verticalPanel.add(sp);
 		model.getSubFilters().add(sp.getFilterModel());
-		
-		
+
 		verticalPanel.addStyleName("leftborder");
 
 		HorizontalPanel hp = new HorizontalPanel();
 
-		Button plus = new Button();//"+");
+		Button plus = new Button();// "+");
 		plus.setIcon(ICONS.add());
 		plus.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
@@ -172,23 +171,21 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 			}
 		});
 
-//		if (parent != null) {
-			this.add(horizontalPanel);
-//		} else {
-//			VerticalPanel temp = new VerticalPanel();
-//			temp.add(horizontalPanel);
-//			
-//			HorizontalPanel temp2 = new HorizontalPanel();
-//			Button filterButton = new Button("Filter");
-//			Button clearButton = new Button("X");
-//			temp2.add(filterButton);
-//			temp2.add(clearButton);
-//			
-//			temp.add(temp2);
-//			this.add(temp);
-//		}
-
-		
+		// if (parent != null) {
+		this.add(horizontalPanel);
+		// } else {
+		// VerticalPanel temp = new VerticalPanel();
+		// temp.add(horizontalPanel);
+		//			
+		// HorizontalPanel temp2 = new HorizontalPanel();
+		// Button filterButton = new Button("Filter");
+		// Button clearButton = new Button("X");
+		// temp2.add(filterButton);
+		// temp2.add(clearButton);
+		//			
+		// temp.add(temp2);
+		// this.add(temp);
+		// }
 
 		this.add(verticalPanel);
 		verticalPanel.add(hp);
@@ -197,57 +194,76 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 
 	@Override
 	public ComplexModel getFilterModel() {
-//		ComplexModel model = new ComplexModel(BinaryOperator.valueOf(combo.getValue().getValue()));
-//
-//		for (int i = 0; i < verticalPanel.getItemCount() - 1; i++) {
-//			model.getSubFilters().add(((Filter) verticalPanel.getItem(i)).getFilterModel());
-//		}
+		// ComplexModel model = new
+		// ComplexModel(BinaryOperator.valueOf(combo.getValue().getValue()));
+		//
+		// for (int i = 0; i < verticalPanel.getItemCount() - 1; i++) {
+		// model.getSubFilters().add(((Filter)
+		// verticalPanel.getItem(i)).getFilterModel());
+		// }
 		return model;
 	}
 
 	@Override
-	public void setFilterExpression(FilterModel filterModel)
-	{
-		model = (ComplexModel)filterModel;
-		
-		while(verticalPanel.getItemCount() > 1)verticalPanel.remove(verticalPanel.getWidget(0));
-		
-	
-		SimpleComboValue<String> val = combo.getStore().findModel("value", model.getOperator());
+	public void setFilterExpression(FilterModel filterModel) {
+		model = (ComplexModel) filterModel;
+
+		while (verticalPanel.getItemCount() > 1)
+			verticalPanel.remove(verticalPanel.getWidget(0));
+
+		SimpleComboValue<String> val = combo.getStore().findModel("value",
+				model.getOperator());
 		combo.select(val);
 		ArrayList<SimpleComboValue<String>> selection2 = new ArrayList<SimpleComboValue<String>>();
-	    selection2.add(val);
-	    combo.setSelection(selection2);
-		
-		
+		selection2.add(val);
+		combo.setSelection(selection2);
+
 		for (FilterModel filterM : model.getSubFilters()) {
-			if(filterM instanceof SimpleModel)
-			{
-				SimplePanel simplePanel = new SimplePanel(verticalPanel, panel, fields);
-				verticalPanel.insert(simplePanel, verticalPanel.getItemCount() - 1);
+			if (filterM instanceof SimpleModel) {
+				SimplePanel simplePanel = new SimplePanel(verticalPanel, panel,
+						fields);
+				verticalPanel.insert(simplePanel,
+						verticalPanel.getItemCount() - 1);
 				simplePanel.setFilterExpression(filterM);
-			}else if(filterM instanceof ComplexModel)
-			{
+			} else if (filterM instanceof ComplexModel) {
 				FilterPanel fp = new FilterPanel(panel, fields);
 				verticalPanel.insert(fp, verticalPanel.getItemCount() - 1);
 				fp.setFilterExpression(filterM);
 			}
 		}
 		panel.forceLayout();
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
 	}
-	
+
+	@Override
+	public void addField(FilterField field) {
+		fields.add(field);
+		for (int i = 0; i < verticalPanel.getItemCount() - 1; i++) {
+			((Filter) verticalPanel.getItem(i)).addField(field);
+		}
+
+	}
+
+	@Override
+	public void updateField(FilterField field) {
+		for (int i = 0; i < fields.size(); i++) {
+			if (fields.get(i).getValueField().compareTo(field.getValueField()) == 0) {
+				fields.remove(i);
+				fields.add(i, field);
+				break;
+			}
+		}
+		for (int i = 0; i < verticalPanel.getItemCount() - 1; i++) {
+			((Filter) verticalPanel.getItem(i)).updateField(field);
+		}
+	}
+
+	@Override
+	public void removeField(FilterField field) {
+		fields.remove(field);
+		for (int i = 0; i < verticalPanel.getItemCount() - 1; i++) {
+			((Filter) verticalPanel.getItem(i)).removeField(field);
+		}
+	}
+
 }
