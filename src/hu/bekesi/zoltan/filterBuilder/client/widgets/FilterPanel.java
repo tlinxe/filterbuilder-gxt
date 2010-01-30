@@ -33,11 +33,13 @@ package hu.bekesi.zoltan.filterBuilder.client.widgets;
 import hu.bekesi.zoltan.filterBuilder.client.criteria.ComplexModel;
 import hu.bekesi.zoltan.filterBuilder.client.criteria.FilterModel;
 import hu.bekesi.zoltan.filterBuilder.client.criteria.SimpleModel;
+import hu.bekesi.zoltan.filterBuilder.client.icons.FilterBuilderIcons;
 import hu.bekesi.zoltan.filterBuilder.client.widgets.fields.FilterField;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.extjs.gxt.ui.client.GXT;
 import com.extjs.gxt.ui.client.Style.VerticalAlignment;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
@@ -49,10 +51,13 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
 import com.extjs.gxt.ui.client.widget.form.ComboBox.TriggerAction;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 
 public class FilterPanel extends HorizontalPanel implements Filter {
 
+	public static final FilterBuilderIcons ICONS = GWT.create(FilterBuilderIcons.class);
+	
 	List<FilterField> fields;
 	FilterPanel panel;
 	FilterPanel parent;
@@ -94,7 +99,8 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 		horizontalPanel = new HorizontalPanel();
 
 		if (parent != null) {
-			Button minus = new Button("-");
+			Button minus = new Button();//"-");
+			minus.setIcon(ICONS.delete());
 
 			horizontalPanel.add(minus);
 			minus.addSelectionListener(new SelectionListener<ButtonEvent>() {
@@ -138,7 +144,8 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 
 		HorizontalPanel hp = new HorizontalPanel();
 
-		Button plus = new Button("+");
+		Button plus = new Button();//"+");
+		plus.setIcon(ICONS.add());
 		plus.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
