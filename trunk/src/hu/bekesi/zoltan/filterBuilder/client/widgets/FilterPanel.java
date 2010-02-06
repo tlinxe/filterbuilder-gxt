@@ -72,7 +72,7 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 
 	public void forceLayout() {
 		this.layout(true);
-		this.repaint();
+		//this.repaint();
 
 		if (this.parent != null) {
 			parent.forceLayout();
