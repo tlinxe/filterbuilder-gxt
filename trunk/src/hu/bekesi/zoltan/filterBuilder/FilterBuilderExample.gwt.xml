@@ -27,8 +27,9 @@
  Author : Zoltan Bekesi<bekesizoltan@gmail.com>
 -->
 
-<module>
-	<inherits name='com.google.gwt.user.User' />
-	<inherits name='com.google.gwt.user.theme.standard.Standard' />
-	<inherits name='com.extjs.gxt.ui.GXT' />
+<module rename-to='filterbuilder'>
+
+	<inherits name='hu.bekesi.zoltan.filterBuilder.FilterBuilder' />
+	<entry-point class='hu.bekesi.zoltan.filterBuilder.client.FilterBuilderExample' />
+	<source path='client' />
 </module>
