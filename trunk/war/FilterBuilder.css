@@ -1,2 +1,4 @@
 /** Add css rules here for your application. */
-
+.leftborder{ 
+	border-left: 1px black solid;
+	 }
