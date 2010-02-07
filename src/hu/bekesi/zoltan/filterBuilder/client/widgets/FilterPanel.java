@@ -38,7 +38,6 @@ import hu.bekesi.zoltan.filterBuilder.client.widgets.fields.FilterField;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.extjs.gxt.ui.client.GXT;
 import com.extjs.gxt.ui.client.Style.VerticalAlignment;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
@@ -140,6 +139,10 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 		model.getSubFilters().add(sp.getFilterModel());
 
 		verticalPanel.addStyleName("leftborder");
+		
+		
+
+
 
 		HorizontalPanel hp = new HorizontalPanel();
 
@@ -156,6 +159,7 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 		});
 		hp.add(plus);
 
+				
 		Button plusAdv = new Button("+()");
 		hp.add(plusAdv);
 
@@ -171,22 +175,8 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 			}
 		});
 
-		// if (parent != null) {
 		this.add(horizontalPanel);
-		// } else {
-		// VerticalPanel temp = new VerticalPanel();
-		// temp.add(horizontalPanel);
-		//			
-		// HorizontalPanel temp2 = new HorizontalPanel();
-		// Button filterButton = new Button("Filter");
-		// Button clearButton = new Button("X");
-		// temp2.add(filterButton);
-		// temp2.add(clearButton);
-		//			
-		// temp.add(temp2);
-		// this.add(temp);
-		// }
-
+		
 		this.add(verticalPanel);
 		verticalPanel.add(hp);
 
@@ -194,13 +184,6 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 
 	@Override
 	public ComplexModel getFilterModel() {
-		// ComplexModel model = new
-		// ComplexModel(BinaryOperator.valueOf(combo.getValue().getValue()));
-		//
-		// for (int i = 0; i < verticalPanel.getItemCount() - 1; i++) {
-		// model.getSubFilters().add(((Filter)
-		// verticalPanel.getItem(i)).getFilterModel());
-		// }
 		return model;
 	}
 
