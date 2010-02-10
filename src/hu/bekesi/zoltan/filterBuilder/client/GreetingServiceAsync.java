@@ -29,9 +29,12 @@
 
 package hu.bekesi.zoltan.filterBuilder.client;
 
+import com.extjs.gxt.ui.client.data.BaseModelData;
 import com.extjs.gxt.ui.client.data.ListLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.ModelData;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -39,5 +42,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface GreetingServiceAsync {
 	void greetServer(String input, AsyncCallback<String> callback);
-	void getData(ListLoadConfig loadConfig, AsyncCallback<ListLoadResult<ModelData>> callback); 
+	void getData(ListLoadConfig loadConfig, AsyncCallback<ListLoadResult<ModelData>> callback);
+	void getSearchData(PagingLoadConfig loadConfig,
+			AsyncCallback<PagingLoadResult<BaseModelData>> callback); 
 }

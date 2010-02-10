@@ -42,11 +42,15 @@ import java.util.List;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.data.BaseListLoader;
 import com.extjs.gxt.ui.client.data.BaseModelData;
+import com.extjs.gxt.ui.client.data.BasePagingLoader;
 import com.extjs.gxt.ui.client.data.ListLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoader;
 import com.extjs.gxt.ui.client.data.LoadEvent;
 import com.extjs.gxt.ui.client.data.ModelData;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoader;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.IconButtonEvent;
@@ -393,10 +397,28 @@ public class FilterBuilderExample implements EntryPoint {
 					ComplexModel cm2 = new ComplexModel("AND");
 					SimpleModel sm3 = new SimpleModel(fields.get(2).getValueField(),"contains", "5"); 
 					SimpleModel sm4 = new SimpleModel(fields.get(3).getValueField(),"contains", "3");
+					
+					BaseModelData m = null;
+					m = new BaseModelData();
+					m.set("id", "id5");
+					m.set("val", "val5");
+					
+					SimpleModel sm5 = new SimpleModel(fields.get(5).getValueField(),"equals", m);
+					
+					m = new BaseModelData();
+					m.set("id", "id8");
+					m.set("val", "val8");
+					
+					SimpleModel sm6 = new SimpleModel(fields.get(6).getValueField(),"equals", m);
+					
+					
+					
 					cm1.getSubFilters().add(sm1);
 					cm1.getSubFilters().add(sm2);
 					cm2.getSubFilters().add(sm3);
 					cm2.getSubFilters().add(sm4);
+					cm2.getSubFilters().add(sm5);
+					cm2.getSubFilters().add(sm6);
 					cm1.getSubFilters().add(cm2);
 						fb.setFilterExpression(cm1);
 					}
@@ -527,6 +549,30 @@ public class FilterBuilderExample implements EntryPoint {
 		// fields.add(new FilterTextField("id1", "name1"));
 		fields.add(new FilterTextField<ModelData>("id2", "name2", store, "val",
 				"id"));
+		
+		
+		 RpcProxy<PagingLoadResult<BaseModelData>> proxy = new RpcProxy<PagingLoadResult<BaseModelData>>() {  
+		      @Override  
+		      public void load(Object loadConfig, AsyncCallback<PagingLoadResult<BaseModelData>> callback) {  
+		        //service.getPosts((PagingLoadConfig) loadConfig, callback);
+		    	  greetingService.getSearchData((PagingLoadConfig) loadConfig, callback);
+		      }  
+		    };  
+		  
+		    // loader  
+		    final PagingLoader<PagingLoadResult<BaseModelData>> loader = new BasePagingLoader<PagingLoadResult<BaseModelData>>(  
+		        proxy);  
+		    loader.setRemoteSort(true);  
+		  
+		    ListStore<BaseModelData> store2 = new ListStore<BaseModelData>(loader);  
+		
+		    fields.add(new FilterTextField<BaseModelData>("id3", "name3", store2, "val",
+			"id"));
+		
+		
+		
+		
+		
 		return fields;
 	}
 
