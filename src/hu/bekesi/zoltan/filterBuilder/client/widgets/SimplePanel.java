@@ -156,7 +156,7 @@ public class SimplePanel extends HorizontalPanel implements Filter {
 	@Override
 	public void setFilterExpression(FilterModel filterModel) {
 		model = (SimpleModel) filterModel;
-		FilterField ff = combo.getStore().findModel("name",
+		FilterField ff = combo.getStore().findModel("valueField",
 				model.getValueField());
 		// combo.select(ff);
 		combo.disableEvents(true);
