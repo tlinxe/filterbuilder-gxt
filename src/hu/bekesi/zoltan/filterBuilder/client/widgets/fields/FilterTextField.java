@@ -126,8 +126,7 @@ public class FilterTextField<M extends ModelData> extends FilterField {
 								model.getDatas().remove(0);
 							// model.getDatas().add(comboBox.getSelectedText());
 							model.getDatas().add(
-									comboBox.getSelection().get(0).get(
-											comboValueField));
+									comboBox.getSelection().get(0));//.get(comboValueField));
 
 						}
 					});
