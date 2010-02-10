@@ -36,9 +36,12 @@ import java.util.ArrayList;
 
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BaseModelData;
+import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.ModelData;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
@@ -98,6 +101,26 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 //		}
 
 		return new BaseListLoadResult<ModelData>(list);
+	}
+
+
+	@Override
+	public PagingLoadResult<BaseModelData> getSearchData(PagingLoadConfig loadConfig) {
+		
+		ArrayList<BaseModelData> list = new ArrayList<BaseModelData>();
+		
+		
+		BaseModelData m = null;
+		for (int i = 0; i < 10; i++) {
+			m = new BaseModelData();
+			m.set("id", "id" + i);
+			m.set("val", "val" + i);
+			list.add(m);
+		}
+		PagingLoadResult<BaseModelData> result = new BasePagingLoadResult<BaseModelData>(list);
+		result.setOffset(0);
+		result.setTotalLength(10);
+		return result;
 	}
 
 
