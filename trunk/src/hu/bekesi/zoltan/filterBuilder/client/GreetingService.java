@@ -29,9 +29,12 @@
 
 package hu.bekesi.zoltan.filterBuilder.client;
 
+import com.extjs.gxt.ui.client.data.BaseModelData;
 import com.extjs.gxt.ui.client.data.ListLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.ModelData;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -42,4 +45,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface GreetingService extends RemoteService {
 	String greetServer(String name);
 	ListLoadResult<ModelData> getData(ListLoadConfig loadConfig);
+	
+	PagingLoadResult<BaseModelData> getSearchData(PagingLoadConfig loadConfig);
+	
+	
 }
