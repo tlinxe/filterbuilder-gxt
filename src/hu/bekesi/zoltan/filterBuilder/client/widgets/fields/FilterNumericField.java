@@ -122,7 +122,7 @@ public class FilterNumericField<M extends ModelData> extends FilterField {
 								if (model.getDatas().size() > 1)
 									model.getDatas().remove(1);
 								//model.getDatas().add(comboBox.getSelectedText());
-								model.getDatas().add(comboBox.getSelection().get(0).get(comboValueField));
+								model.getDatas().add(comboBox.getSelection().get(0));//.get(comboValueField));
 
 							}
 						});
@@ -172,7 +172,7 @@ public class FilterNumericField<M extends ModelData> extends FilterField {
 					if (model.getDatas().size() > 0)
 						model.getDatas().remove(0);
 //					model.getDatas().add(0, comboBox.getSelectedText());
-					model.getDatas().add(0, comboBox.getSelection().get(0).get(comboValueField));
+					model.getDatas().add(0, comboBox.getSelection().get(0));//.get(comboValueField));
 					
 				}
 			});
