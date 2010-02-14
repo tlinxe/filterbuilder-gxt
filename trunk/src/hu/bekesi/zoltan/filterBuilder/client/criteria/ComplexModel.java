@@ -82,6 +82,14 @@ public class ComplexModel extends BaseModelData implements FilterModel {
 			}
 			return true;
 
+		} else if (getOperator().compareTo("NAND") == 0) {
+			for (FilterModel filterModel : getSubFilters()) {
+				if (!filterModel.select(store, parent, item, property)) {
+					return true;
+				}
+			}
+			return false;
+
 		} else if (getOperator().compareTo("OR") == 0) {
 			for (FilterModel filterModel : getSubFilters()) {
 				if (filterModel.select(store, parent, item, property)) {
@@ -89,6 +97,13 @@ public class ComplexModel extends BaseModelData implements FilterModel {
 				}
 			}
 			return false;
+		} else if (getOperator().compareTo("NOR") == 0) {
+			for (FilterModel filterModel : getSubFilters()) {
+				if (filterModel.select(store, parent, item, property)) {
+					return false;
+				}
+			}
+			return true;
 		} else {
 			return !(getSubFilters().get(0).select(store, parent, item,
 					property));
