@@ -116,7 +116,10 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 		combo.setTriggerAction(TriggerAction.ALL);
 		combo.add("AND");
 		combo.add("OR");
-		combo.add("NOT");
+		//combo.add("NOT");
+		combo.add("NAND");
+		combo.add("NOR");
+		
 		combo.setSimpleValue("AND");
 		// combo.add(BinaryOperator.stringValues());
 
