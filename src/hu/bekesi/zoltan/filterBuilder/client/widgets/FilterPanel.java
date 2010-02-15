@@ -181,9 +181,9 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 		});
 
 		this.add(horizontalPanel);
-		TableData  td = new TableData();
-		td.setPadding(2);
-		this.add(verticalPanel,td);
+		//TableData  td = new TableData();
+		//td.setPadding(2);
+		this.add(verticalPanel);//,td);
 		verticalPanel.add(hp);
 
 	}
