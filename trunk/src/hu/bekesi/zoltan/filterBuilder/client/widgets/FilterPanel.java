@@ -49,6 +49,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
 import com.extjs.gxt.ui.client.widget.form.ComboBox.TriggerAction;
+import com.extjs.gxt.ui.client.widget.layout.TableData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -71,6 +72,7 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 
 	public void forceLayout() {
 		this.layout(true);
+		this.horizontalPanel.layout(true);
 		//this.repaint();
 
 		if (this.parent != null) {
@@ -179,8 +181,9 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 		});
 
 		this.add(horizontalPanel);
-		
-		this.add(verticalPanel);
+		TableData  td = new TableData();
+		td.setPadding(2);
+		this.add(verticalPanel,td);
 		verticalPanel.add(hp);
 
 	}
