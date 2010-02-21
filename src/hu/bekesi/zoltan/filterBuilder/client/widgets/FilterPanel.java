@@ -108,6 +108,7 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 				public void componentSelected(ButtonEvent ce) {
 					parent.removeFilter(panel);
 					panel.forceLayout();
+					parent.getFilterModel().getSubFilters().remove(model);
 				}
 			});
 		}

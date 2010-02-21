@@ -84,6 +84,7 @@ public class SimplePanel extends HorizontalPanel implements Filter {
 			public void componentSelected(ButtonEvent ce) {
 				verticalPanel.remove(hp);
 				panel.forceLayout();
+				panel.getFilterModel().getSubFilters().remove(model);
 			}
 		});
 		hp.add(minus);
