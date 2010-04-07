@@ -83,9 +83,7 @@ public class FilterBuilderExample implements EntryPoint {
 		createClientSideCombos();
 	}
 
-	
-	public void createClientSideCombos()
-	{
+	public void createClientSideCombos() {
 		Button button = new Button("Client Side Combos");
 		RootPanel.get().add(button);
 		button.addSelectionListener(new SelectionListener<ButtonEvent>() {
@@ -98,12 +96,9 @@ public class FilterBuilderExample implements EntryPoint {
 				w.setWidth(1500);
 				w.setHeight(800);
 				w.setLayout(new BorderLayout());
-				
-				
-				//////////////////////////////////////////
-				
-				
-				
+
+				// ////////////////////////////////////////
+
 				ListStore<ModelData> store = new ListStore<ModelData>();
 				//
 				BaseModelData mm = null;
@@ -148,21 +143,13 @@ public class FilterBuilderExample implements EntryPoint {
 				mm.set("val", "V110");
 				store.add(mm);
 				ArrayList<FilterField> fields = new ArrayList<FilterField>();
-				
-				
-				fields.add(new FilterTextField<ModelData>("val1", "Value1", store, "val",
-				"myid"));
-				
-				
-				
-				
-				
-				
-				
-				/////////////////////////////////////////////
+
+				fields.add(new FilterTextField<ModelData>("val1", "Value1",
+						store, "val", "myid"));
+
+				// ///////////////////////////////////////////
 				final FilterBuilder fb = new FilterBuilder(fields);
-				
-				
+
 				ContentPanel north = new ContentPanel();
 				north.setHeaderVisible(true);
 				north.setHeight("Client side Combos");
@@ -184,7 +171,7 @@ public class FilterBuilderExample implements EntryPoint {
 					m.set("val5", i);
 					bigStore.add(m);
 				}
-				
+
 				List<ColumnConfig> configs = new ArrayList<ColumnConfig>();
 
 				ColumnConfig column = new ColumnConfig();
@@ -203,8 +190,6 @@ public class FilterBuilderExample implements EntryPoint {
 
 				ColumnModel cm = new ColumnModel(configs);
 
-				
-
 				Grid<ModelData> grid = new Grid<ModelData>(bigStore, cm);
 				// grid.setStyleAttribute("borderTop", "none");
 				grid.setAutoExpandColumn("fid");
@@ -216,11 +201,10 @@ public class FilterBuilderExample implements EntryPoint {
 
 			}
 		});
-		
+
 	}
-	
-	public void createServerSideGrid()
-	{
+
+	public void createServerSideGrid() {
 		Button button = new Button("Server Side");
 		RootPanel.get().add(button);
 		button.addSelectionListener(new SelectionListener<ButtonEvent>() {
@@ -241,50 +225,50 @@ public class FilterBuilderExample implements EntryPoint {
 				north.add(fb, new BorderLayoutData(LayoutRegion.NORTH));
 				w.add(north, new BorderLayoutData(LayoutRegion.NORTH));
 
-				
-
 				RpcProxy<ListLoadResult<ModelData>> proxy = new RpcProxy<ListLoadResult<ModelData>>() {
 
 					@Override
 					protected void load(Object loadConfig,
 							AsyncCallback<ListLoadResult<ModelData>> callback) {
-						greetingService.getData((ListLoadConfig)loadConfig, callback);
-						
+						greetingService.getData((ListLoadConfig) loadConfig,
+								callback);
+
 					}
 				};
 
-				ListLoader<ListLoadResult<ModelData>> loader = new BaseListLoader<ListLoadResult<ModelData>>(proxy);
+				ListLoader<ListLoadResult<ModelData>> loader = new BaseListLoader<ListLoadResult<ModelData>>(
+						proxy);
 				ListStore<ModelData> bigStore = new ListStore<ModelData>(loader);
 
-				loader.addLoadListener(new LoadListener(){
-					
+				loader.addLoadListener(new LoadListener() {
+
 					@Override
 					public void loaderLoadException(LoadEvent le) {
 						System.out.println(le.toString());
 						super.loaderLoadException(le);
 					}
+
 					@Override
 					public void loaderLoad(LoadEvent le) {
 						System.out.println(le.toString());
 						super.loaderLoad(le);
 					}
-					
+
 				});
-				
-				
-				//fb.bind(bigStore);
+
+				// fb.bind(bigStore);
 				fb.bind(loader);
-//				for (int i = 0; i < 100; i++) {
-//					BaseModelData m = new BaseModelData();
-//					m.set("fid", "id" + i);
-//					m.set("val1", "v1" + i);
-//					m.set("val2", "v2" + i);
-//					m.set("val3", "v3" + i);
-//					m.set("val4", "v4" + i);
-//					m.set("val5", i);
-//					bigStore.add(m);
-//				}
-				
+				// for (int i = 0; i < 100; i++) {
+				// BaseModelData m = new BaseModelData();
+				// m.set("fid", "id" + i);
+				// m.set("val1", "v1" + i);
+				// m.set("val2", "v2" + i);
+				// m.set("val3", "v3" + i);
+				// m.set("val4", "v4" + i);
+				// m.set("val5", i);
+				// bigStore.add(m);
+				// }
+
 				List<ColumnConfig> configs = new ArrayList<ColumnConfig>();
 
 				ColumnConfig column = new ColumnConfig();
@@ -303,8 +287,6 @@ public class FilterBuilderExample implements EntryPoint {
 
 				ColumnModel cm = new ColumnModel(configs);
 
-				
-
 				Grid<ModelData> grid = new Grid<ModelData>(bigStore, cm);
 				grid.setAutoExpandColumn("fid");
 				grid.setBorders(true);
@@ -316,10 +298,8 @@ public class FilterBuilderExample implements EntryPoint {
 			}
 		});
 	}
-	
-	
-	public void createClientSideLoadGrid()
-	{
+
+	public void createClientSideLoadGrid() {
 		Button button = new Button("Client Side Loadable Grid");
 		RootPanel.get().add(button);
 		button.addSelectionListener(new SelectionListener<ButtonEvent>() {
@@ -332,9 +312,9 @@ public class FilterBuilderExample implements EntryPoint {
 				w.setWidth(1500);
 				w.setHeight(800);
 				w.setLayout(new BorderLayout());
-				
+
 				final ArrayList<FilterField> fields = getFields();
-				
+
 				final FilterBuilder fb = new FilterBuilder(fields);
 				ContentPanel north = new ContentPanel();
 				north.setHeaderVisible(true);
@@ -357,7 +337,7 @@ public class FilterBuilderExample implements EntryPoint {
 					m.set("val5", i);
 					bigStore.add(m);
 				}
-				
+
 				List<ColumnConfig> configs = new ArrayList<ColumnConfig>();
 
 				ColumnConfig column = new ColumnConfig();
@@ -376,65 +356,71 @@ public class FilterBuilderExample implements EntryPoint {
 
 				ColumnModel cm = new ColumnModel(configs);
 
-				
-
 				Grid<ModelData> grid = new Grid<ModelData>(bigStore, cm);
 				grid.setAutoExpandColumn("fid");
 				grid.setBorders(true);
 				grid.setStripeRows(true);
 				w.add(grid, new BorderLayoutData(LayoutRegion.CENTER));
 
+				w.getHeader().addTool(
+						new ToolButton("x-tool-refresh",
+								new SelectionListener<IconButtonEvent>() {
 
-				
-				
-				w.getHeader().addTool(new ToolButton("x-tool-refresh", new SelectionListener<IconButtonEvent>() {
-					
-					@Override
-					public void componentSelected(IconButtonEvent ce) {
-					ComplexModel cm1 = new ComplexModel("OR");
-					SimpleModel sm1 = new SimpleModel(fields.get(0).getValueField(),"contains", "0"); 
-					SimpleModel sm2 = new SimpleModel(fields.get(1).getValueField(),"contains", "3"); 
-					ComplexModel cm2 = new ComplexModel("AND");
-					SimpleModel sm3 = new SimpleModel(fields.get(2).getValueField(),"contains", "5"); 
-					SimpleModel sm4 = new SimpleModel(fields.get(3).getValueField(),"contains", "3");
-					
-					BaseModelData m = null;
-					m = new BaseModelData();
-					m.set("id", "id5");
-					m.set("val", "val5");
-					
-					SimpleModel sm5 = new SimpleModel(fields.get(5).getValueField(),"equals", m);
-					
-					m = new BaseModelData();
-					m.set("id", "id8");
-					m.set("val", "val8");
-					
-					SimpleModel sm6 = new SimpleModel(fields.get(6).getValueField(),"equals", m);
-					
-					
-					
-					cm1.getSubFilters().add(sm1);
-					cm1.getSubFilters().add(sm2);
-					cm2.getSubFilters().add(sm3);
-					cm2.getSubFilters().add(sm4);
-					cm2.getSubFilters().add(sm5);
-					cm2.getSubFilters().add(sm6);
-					cm1.getSubFilters().add(cm2);
-						fb.setFilterExpression(cm1);
-					}
-				}));  
-				
-				
-				
-				
+									@Override
+									public void componentSelected(
+											IconButtonEvent ce) {
+										ComplexModel cm1 = new ComplexModel(
+												"OR");
+										SimpleModel sm1 = new SimpleModel(
+												fields.get(0).getValueField(),
+												"contains", "0");
+										SimpleModel sm2 = new SimpleModel(
+												fields.get(1).getValueField(),
+												"contains", "3");
+										ComplexModel cm2 = new ComplexModel(
+												"AND");
+										SimpleModel sm3 = new SimpleModel(
+												fields.get(2).getValueField(),
+												"contains", "5");
+										SimpleModel sm4 = new SimpleModel(
+												fields.get(3).getValueField(),
+												"contains", "3");
+
+										BaseModelData m = null;
+										m = new BaseModelData();
+										m.set("id", "id5");
+										m.set("val", "val5");
+
+										SimpleModel sm5 = new SimpleModel(
+												fields.get(5).getValueField(),
+												"equals", m);
+
+										m = new BaseModelData();
+										m.set("id", "id8");
+										m.set("val", "val8");
+
+										SimpleModel sm6 = new SimpleModel(
+												fields.get(6).getValueField(),
+												"equals", m);
+
+										cm1.getSubFilters().add(sm1);
+										cm1.getSubFilters().add(sm2);
+										cm2.getSubFilters().add(sm3);
+										cm2.getSubFilters().add(sm4);
+										cm2.getSubFilters().add(sm5);
+										cm2.getSubFilters().add(sm6);
+										cm1.getSubFilters().add(cm2);
+										fb.setFilterExpression(cm1);
+									}
+								}));
+
 				w.show();
 
 			}
 		});
 
-	
 	}
-	
+
 	public void createClientSideGrid() {
 		Button button = new Button("Client Side");
 		RootPanel.get().add(button);
@@ -470,7 +456,7 @@ public class FilterBuilderExample implements EntryPoint {
 					m.set("val5", i);
 					bigStore.add(m);
 				}
-				
+
 				List<ColumnConfig> configs = new ArrayList<ColumnConfig>();
 
 				ColumnConfig column = new ColumnConfig();
@@ -489,8 +475,6 @@ public class FilterBuilderExample implements EntryPoint {
 
 				ColumnModel cm = new ColumnModel(configs);
 
-				
-
 				Grid<ModelData> grid = new Grid<ModelData>(bigStore, cm);
 				// grid.setStyleAttribute("borderTop", "none");
 				grid.setAutoExpandColumn("fid");
@@ -498,6 +482,42 @@ public class FilterBuilderExample implements EntryPoint {
 				grid.setStripeRows(true);
 				w.add(grid, new BorderLayoutData(LayoutRegion.CENTER));
 
+				final FilterTextField<ModelData> addedField = new FilterTextField<ModelData>(
+						"val7", "val7");
+				w.getHeader().addTool(
+						new ToolButton("x-tool-plus",
+								new SelectionListener<IconButtonEvent>() {
+
+									@Override
+									public void componentSelected(
+											IconButtonEvent ce) {
+										fb.addField(addedField);
+									}
+								}));
+
+				w.getHeader().addTool(
+						new ToolButton("x-tool-minus",
+								new SelectionListener<IconButtonEvent>() {
+
+									@Override
+									public void componentSelected(
+											IconButtonEvent ce) {
+										fb.removeField(addedField);
+									}
+								}));
+				
+				w.getHeader().addTool(
+						new ToolButton("x-tool-refresh",
+								new SelectionListener<IconButtonEvent>() {
+
+									@Override
+									public void componentSelected(
+											IconButtonEvent ce) {
+										addedField.setName("newName");
+										fb.updateField(addedField);
+									}
+								}));
+				
 				w.show();
 
 			}
@@ -549,30 +569,27 @@ public class FilterBuilderExample implements EntryPoint {
 		// fields.add(new FilterTextField("id1", "name1"));
 		fields.add(new FilterTextField<ModelData>("id2", "name2", store, "val",
 				"id"));
-		
-		
-		 RpcProxy<PagingLoadResult<BaseModelData>> proxy = new RpcProxy<PagingLoadResult<BaseModelData>>() {  
-		      @Override  
-		      public void load(Object loadConfig, AsyncCallback<PagingLoadResult<BaseModelData>> callback) {  
-		        //service.getPosts((PagingLoadConfig) loadConfig, callback);
-		    	  greetingService.getSearchData((PagingLoadConfig) loadConfig, callback);
-		      }  
-		    };  
-		  
-		    // loader  
-		    final PagingLoader<PagingLoadResult<BaseModelData>> loader = new BasePagingLoader<PagingLoadResult<BaseModelData>>(  
-		        proxy);  
-		    loader.setRemoteSort(true);  
-		  
-		    ListStore<BaseModelData> store2 = new ListStore<BaseModelData>(loader);  
-		
-		    fields.add(new FilterTextField<BaseModelData>("id3", "name3", store2, "val",
-			"id"));
-		
-		
-		
-		
-		
+
+		RpcProxy<PagingLoadResult<BaseModelData>> proxy = new RpcProxy<PagingLoadResult<BaseModelData>>() {
+			@Override
+			public void load(Object loadConfig,
+					AsyncCallback<PagingLoadResult<BaseModelData>> callback) {
+				// service.getPosts((PagingLoadConfig) loadConfig, callback);
+				greetingService.getSearchData((PagingLoadConfig) loadConfig,
+						callback);
+			}
+		};
+
+		// loader
+		final PagingLoader<PagingLoadResult<BaseModelData>> loader = new BasePagingLoader<PagingLoadResult<BaseModelData>>(
+				proxy);
+		loader.setRemoteSort(true);
+
+		ListStore<BaseModelData> store2 = new ListStore<BaseModelData>(loader);
+
+		fields.add(new FilterTextField<BaseModelData>("id3", "name3", store2,
+				"val", "id"));
+
 		return fields;
 	}
 
