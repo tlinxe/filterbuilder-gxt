@@ -90,6 +90,7 @@ public class SimplePanel extends HorizontalPanel implements Filter {
 		hp.add(minus);
 
 		store = new ListStore<FilterField>();
+		store.setMonitorChanges(true);
 		store.setKeyProvider(new ModelKeyProvider<FilterField>() {
 
 			@Override
@@ -203,14 +204,14 @@ public class SimplePanel extends HorizontalPanel implements Filter {
 	}
 
 	@Override
-	public void removeField(FilterField field) {
+	public void updateField(FilterField field) {
 		int index = store.indexOf(field);
 		store.remove(field);
 		store.insert(field, index);
 	}
 
 	@Override
-	public void updateField(FilterField field) {
+	public void removeField(FilterField field) {
 		store.remove(field);
 	}
 }
