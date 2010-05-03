@@ -40,6 +40,7 @@ import com.extjs.gxt.ui.client.data.Loader;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.store.Store;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
@@ -50,13 +51,18 @@ public class FilterBuilder extends VerticalPanel {
 	FilterPanel filterPanel;
 	Store<ModelData> store;
 	Loader<ListLoadResult<ModelData>> loader;
+	ListStore<FilterField> filterStore;
 
 	public FilterBuilder(List<FilterField> fields_) {
 		this(fields_, true);
 	}
 
 	public FilterBuilder(List<FilterField> fields_, boolean showButtons) {
-		filterPanel = new FilterPanel(fields_);
+
+		filterStore = new ListStore<FilterField>();
+		filterStore.add(fields_);
+		filterStore.setMonitorChanges(true);
+		filterPanel = new FilterPanel(filterStore);
 		this.add(filterPanel);
 		if (showButtons) {
 			HorizontalPanel temp = new HorizontalPanel();
@@ -132,20 +138,24 @@ public class FilterBuilder extends VerticalPanel {
 		store.addFilter(complexModel);
 	}
 
-	public void addField(FilterField field)
-	{
-		filterPanel.addField(field);
+	public void addField(FilterField field) {
+		// TODO filterPanel.addField(field);
+		filterStore.add(field);
 	}
-	
-	public void updateField(FilterField field)
-	{
-		filterPanel.updateField(field);
+
+	public void updateFieldName(String id, String newName) {
+		filterPanel.prepareUpdateField(id);
+		FilterField ff = filterStore.findModel("valueField", id);
+		if (ff != null) {
+			ff.setName(newName);
+			filterStore.update(ff);
+		}
+		// filterPanel.updateField(id);
 	}
-	
-	public void removeField(FilterField field)
-	{
-		filterPanel.removeField(field);
+
+	public void removeField(FilterField field) {
+		filterStore.remove(field);
+		// TODO filterPanel.removeField(field);
 	}
-	
-	
+
 }
