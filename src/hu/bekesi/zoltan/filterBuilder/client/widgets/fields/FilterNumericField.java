@@ -46,6 +46,7 @@ import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
+import com.extjs.gxt.ui.client.widget.form.ComboBox.TriggerAction;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -65,7 +66,8 @@ public class FilterNumericField<M extends ModelData> extends FilterField {
 
 	}
 
-	public FilterNumericField(String valueField, String name, ListStore<M> store_, String displayField_, String valueField_) {
+	public FilterNumericField(String valueField, String name,
+			ListStore<M> store_, String displayField_, String valueField_) {
 		super(valueField, name);
 		store = store_;
 		comboDisplayField = displayField_;
@@ -82,8 +84,10 @@ public class FilterNumericField<M extends ModelData> extends FilterField {
 		SimpleComboBox<String> combo = new SimpleComboBox<String>();
 		combo.setWidth(135);
 		combo.setForceSelection(true);
+		combo.setEditable(false);
+		combo.setTriggerAction(TriggerAction.ALL);
 		combo.add("=");
-		combo.add("!=");
+		combo.add("<>");
 		combo.add("<");
 		combo.add("<=");
 		combo.add(">");
@@ -91,70 +95,85 @@ public class FilterNumericField<M extends ModelData> extends FilterField {
 		combo.add("between");
 
 		combo.setSimpleValue("=");
-		model.setOp("=");
-		combo.addSelectionChangedListener(new SelectionChangedListener<SimpleComboValue<String>>() {
 
-			@Override
-			public void selectionChanged(SelectionChangedEvent<SimpleComboValue<String>> se) {
-				//model.setOp(FilterOperator.getOpByValue(se.getSelectedItem().getValue()));
-				model.setOp(se.getSelectedItem().getValue());
-			}
-		});
+		if (model.getOp() == null)
+			model.setOp("=");
 
-		combo.addSelectionChangedListener(new SelectionChangedListener<SimpleComboValue<String>>() {
+		combo
+				.addSelectionChangedListener(new SelectionChangedListener<SimpleComboValue<String>>() {
 
-			@Override
-			public void selectionChanged(SelectionChangedEvent<SimpleComboValue<String>> se) {
-				if (se.getSelectedItem().getValue().compareTo("between") == 0) {
-					hp.add(new Label("and"));
-					// hp.add(new NumberField());
-					if (store != null) {
-						final ComboBox<M> comboBox = new ComboBox<M>();
-						comboBox.setStore(store);
-						comboBox.setDisplayField(comboDisplayField);
-						comboBox.setValueField(comboValueField);
-						comboBox.select(0);
+					@Override
+					public void selectionChanged(
+							SelectionChangedEvent<SimpleComboValue<String>> se) {
+						// model.setOp(FilterOperator.getOpByValue(se.getSelectedItem().getValue()));
+						model.setOp(se.getSelectedItem().getValue());
+					}
+				});
 
-						comboBox.addSelectionChangedListener(new SelectionChangedListener<M>() {
+		combo
+				.addSelectionChangedListener(new SelectionChangedListener<SimpleComboValue<String>>() {
 
-							@Override
-							public void selectionChanged(SelectionChangedEvent<M> se) {
-								if (model.getDatas().size() > 1)
-									model.getDatas().remove(1);
-								//model.getDatas().add(comboBox.getSelectedText());
-								model.getDatas().add(comboBox.getSelection().get(0));//.get(comboValueField));
+					@Override
+					public void selectionChanged(
+							SelectionChangedEvent<SimpleComboValue<String>> se) {
+						if (se.getSelectedItem().getValue()
+								.compareTo("between") == 0) {
+							hp.add(new Label("and"));
+							// hp.add(new NumberField());
+							if (store != null) {
+								final ComboBox<M> comboBox = new ComboBox<M>();
+								comboBox.setStore(store);
+								comboBox.setDisplayField(comboDisplayField);
+								comboBox.setValueField(comboValueField);
+								comboBox.select(0);
 
+								comboBox
+										.addSelectionChangedListener(new SelectionChangedListener<M>() {
+
+											@Override
+											public void selectionChanged(
+													SelectionChangedEvent<M> se) {
+												if (model.getDatas().size() > 1)
+													model.getDatas().remove(1);
+												// model.getDatas().add(comboBox.getSelectedText());
+												model.getDatas().add(
+														comboBox.getSelection()
+																.get(0));// .get(comboValueField));
+
+											}
+										});
+
+								if (store.getLoader() != null) {
+									comboBox.setPageSize(10);
+								}
+								hp.add(comboBox);
+							} else {
+								NumberField nf = new NumberField();
+								nf.addListener(Events.Change,
+										new Listener<FieldEvent>() {
+
+											@Override
+											public void handleEvent(
+													FieldEvent be) {
+												if (model.getDatas().size() > 1)
+													model.getDatas().remove(1);
+												model.getDatas().add(
+														be.getValue());
+											}
+										});
+								hp.add(nf);
 							}
-						});
+							hp.layout(true);
 
-						if (store.getLoader() != null) {
-							comboBox.setPageSize(10);
+						} else {
+							while (hp.getItemCount() > 1) {
+								hp.remove(hp.getWidget(1));
+							}
+							hp.layout(true);
 						}
-						hp.add(comboBox);
-					} else {
-						NumberField nf = new NumberField();
-						nf.addListener(Events.Change, new Listener<FieldEvent>() {
 
-							@Override
-							public void handleEvent(FieldEvent be) {
-								if (model.getDatas().size() > 1)
-									model.getDatas().remove(1);
-								model.getDatas().add(be.getValue());
-							}
-						});
-						hp.add(nf);
 					}
-					hp.layout(true);
-
-				} else {
-					while (hp.getItemCount() > 1) {
-						hp.remove(hp.getWidget(1));
-					}
-					hp.layout(true);
-				}
-
-			}
-		});
+				});
 
 		widgets.add(combo);
 
@@ -165,17 +184,20 @@ public class FilterNumericField<M extends ModelData> extends FilterField {
 			comboBox.setValueField(comboValueField);
 			comboBox.select(0);
 
-			comboBox.addSelectionChangedListener(new SelectionChangedListener<M>() {
+			comboBox
+					.addSelectionChangedListener(new SelectionChangedListener<M>() {
 
-				@Override
-				public void selectionChanged(SelectionChangedEvent<M> se) {
-					if (model.getDatas().size() > 0)
-						model.getDatas().remove(0);
-//					model.getDatas().add(0, comboBox.getSelectedText());
-					model.getDatas().add(0, comboBox.getSelection().get(0));//.get(comboValueField));
-					
-				}
-			});
+						@Override
+						public void selectionChanged(SelectionChangedEvent<M> se) {
+							if (model.getDatas().size() > 0)
+								model.getDatas().remove(0);
+							// model.getDatas().add(0,
+							// comboBox.getSelectedText());
+							model.getDatas().add(0,
+									comboBox.getSelection().get(0));// .get(comboValueField));
+
+						}
+					});
 
 			if (store.getLoader() != null) {
 				comboBox.setPageSize(10);

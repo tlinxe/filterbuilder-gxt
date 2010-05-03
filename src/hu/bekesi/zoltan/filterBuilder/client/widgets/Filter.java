@@ -38,8 +38,8 @@ public interface Filter {
 	FilterModel getFilterModel();
 	void setFilterExpression(FilterModel complexModel);
 	
-	 void addField(FilterField field);
-	 void updateField(FilterField field);
-	 void removeField(FilterField field);
-	
+	 
+	void prepareUpdateField(String id);
+	//void updateField( String id);
+	 
 }

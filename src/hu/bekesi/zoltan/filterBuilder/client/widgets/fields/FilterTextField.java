@@ -80,7 +80,9 @@ public class FilterTextField<M extends ModelData> extends FilterField {
 		SimpleComboBox<String> combo = new SimpleComboBox<String>();
 		combo.setWidth(135);
 		combo.setForceSelection(true);
+		combo.setEditable(false);
 		combo.setTriggerAction(TriggerAction.ALL);
+		
 		combo.add("equals");
 		combo.add("not equals");
 		combo.add("contains");

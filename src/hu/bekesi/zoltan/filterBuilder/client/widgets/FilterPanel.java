@@ -43,6 +43,7 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -58,8 +59,9 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 	public static final FilterBuilderIcons ICONS = GWT
 			.create(FilterBuilderIcons.class);
 
-	List<FilterField> fields;
-	FilterPanel panel;
+//	List<FilterField> fields;
+	ListStore<FilterField> _store;
+
 	FilterPanel parent;
 
 	HorizontalPanel horizontalPanel;
@@ -80,8 +82,8 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 		}
 	}
 
-	public FilterPanel(List<FilterField> fields_) {
-		this(null, fields_);
+	public FilterPanel(ListStore<FilterField> store) {
+		this(null, store);
 	}
 
 	public void removeFilter(Widget widget) {
@@ -89,10 +91,10 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 		model.getSubFilters().remove(((Filter) widget).getFilterModel());
 	}
 
-	FilterPanel(FilterPanel parent_, List<FilterField> fields_) {
-		fields = fields_;
+	FilterPanel(FilterPanel parent_, ListStore<FilterField> store) {
+		_store = store;
 		this.parent = parent_;
-		this.panel = this;
+		
 
 		setVerticalAlign(VerticalAlignment.MIDDLE);
 
@@ -106,8 +108,8 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 			minus.addSelectionListener(new SelectionListener<ButtonEvent>() {
 				@Override
 				public void componentSelected(ButtonEvent ce) {
-					parent.removeFilter(panel);
-					panel.forceLayout();
+					parent.removeFilter(FilterPanel.this);
+					FilterPanel.this.forceLayout();
 					parent.getFilterModel().getSubFilters().remove(model);
 				}
 			});
@@ -140,7 +142,7 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 		horizontalPanel.add(combo);
 
 		verticalPanel = new VerticalPanel();
-		SimplePanel sp = new SimplePanel(verticalPanel, panel, fields);
+		SimplePanel sp = new SimplePanel(verticalPanel, FilterPanel.this, _store);
 		verticalPanel.add(sp);
 		model.getSubFilters().add(sp.getFilterModel());
 
@@ -157,10 +159,10 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 		plus.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				SimplePanel sp = new SimplePanel(verticalPanel, panel, fields);
+				SimplePanel sp = new SimplePanel(verticalPanel, FilterPanel.this,_store);
 				verticalPanel.insert(sp, verticalPanel.getItemCount() - 1);
 				model.getSubFilters().add(sp.getFilterModel());
-				panel.forceLayout();
+				FilterPanel.this.forceLayout();
 			}
 		});
 		hp.add(plus);
@@ -173,10 +175,10 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				FilterPanel fp = new FilterPanel(panel, fields);
+				FilterPanel fp = new FilterPanel(FilterPanel.this, _store);
 				verticalPanel.insert(fp, verticalPanel.getItemCount() - 1);
 				model.getSubFilters().add(fp.getFilterModel());
-				panel.forceLayout();
+				FilterPanel.this.forceLayout();
 
 			}
 		});
@@ -210,50 +212,67 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 
 		for (FilterModel filterM : model.getSubFilters()) {
 			if (filterM instanceof SimpleModel) {
-				SimplePanel simplePanel = new SimplePanel(verticalPanel, panel,
-						fields);
+				SimplePanel simplePanel = new SimplePanel(verticalPanel, FilterPanel.this,
+						_store);
 				verticalPanel.insert(simplePanel,
 						verticalPanel.getItemCount() - 1);
 				simplePanel.setFilterExpression(filterM);
 			} else if (filterM instanceof ComplexModel) {
-				FilterPanel fp = new FilterPanel(panel, fields);
+				FilterPanel fp = new FilterPanel(FilterPanel.this, _store);
 				verticalPanel.insert(fp, verticalPanel.getItemCount() - 1);
 				fp.setFilterExpression(filterM);
 			}
 		}
-		panel.forceLayout();
+		FilterPanel.this.forceLayout();
+		combo.focus();
 
 	}
 
-	@Override
+	/*@Override
 	public void addField(FilterField field) {
 		fields.add(field);
 		for (int i = 0; i < verticalPanel.getItemCount() - 1; i++) {
 			((Filter) verticalPanel.getItem(i)).addField(field);
 		}
 
-	}
+	}*/
+
+//	@Override
+//	public void updateField( String id, String newName) {
+//		for (int i = 0; i < fields.size(); i++) {
+//			if (fields.get(i).getValueField().compareTo(field.getValueField()) == 0) {
+//				fields.remove(i);
+//				fields.add(i, field);
+//				break;
+//			}
+//		}
+//		for (int i = 0; i < verticalPanel.getItemCount() - 1; i++) {
+//			((Filter) verticalPanel.getItem(i)).updateField(field);
+//		}
+//	}
+
+//	@Override
+//	public void removeField(FilterField field) {
+//		//fields.remove(field);
+//		for (int i = 0; i < verticalPanel.getItemCount() - 1; i++) {
+//			((Filter) verticalPanel.getItem(i)).removeField(field);
+//		}
+//	}
 
 	@Override
-	public void updateField(FilterField field) {
-		for (int i = 0; i < fields.size(); i++) {
-			if (fields.get(i).getValueField().compareTo(field.getValueField()) == 0) {
-				fields.remove(i);
-				fields.add(i, field);
-				break;
-			}
-		}
+	public void prepareUpdateField(String id) {
 		for (int i = 0; i < verticalPanel.getItemCount() - 1; i++) {
-			((Filter) verticalPanel.getItem(i)).updateField(field);
+			((Filter) verticalPanel.getItem(i)).prepareUpdateField(id);
 		}
+		
 	}
-
-	@Override
-	public void removeField(FilterField field) {
-		fields.remove(field);
-		for (int i = 0; i < verticalPanel.getItemCount() - 1; i++) {
-			((Filter) verticalPanel.getItem(i)).removeField(field);
-		}
-	}
+//
+//	@Override
+//	public void updateField(String id) {
+//		for (int i = 0; i < verticalPanel.getItemCount() - 1; i++) {
+//			((Filter) verticalPanel.getItem(i)).updateField(id);
+//		}
+//		
+//	}
 
 }
