@@ -39,6 +39,7 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.HideMode;
 import com.extjs.gxt.ui.client.Style.IconAlign;
+import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.ModelKeyProvider;
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -65,8 +66,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class SimplePanel extends HorizontalPanel implements Filter {
 
-	public static final FilterBuilderIcons ICONS = GWT
-			.create(FilterBuilderIcons.class);
+	public static final FilterBuilderIcons ICONS = GWT.create(FilterBuilderIcons.class);
 
 	ComboBox<FilterField> _combo;
 	SimpleModel _model = null;
@@ -76,11 +76,9 @@ public class SimplePanel extends HorizontalPanel implements Filter {
 	FilterField selectedField = null;
 	boolean _currentlySelectedFieldWillBeUpdated = false;
 
-	public SimplePanel(final VerticalPanel verticalPanel,
-			final FilterPanel panel, ListStore<FilterField> store) {
+	public SimplePanel(final VerticalPanel verticalPanel, final FilterPanel panel, ListStore<FilterField> store) {
 		final SimplePanel hp = this;
 		_panel = panel;
-		// model = new SimpleModel(fields.get(0).getName());
 		_model = new SimpleModel(store.getAt(0).getValueField());
 
 		Button minus = new Button();// "-");
@@ -112,19 +110,10 @@ public class SimplePanel extends HorizontalPanel implements Filter {
 				super.storeRemove(se);
 			}
 
-//			@Override
-//			public void storeBeforeDataChanged(StoreEvent<FilterField> se) {
-//				_currentlySelectedFieldWillBeUpdated = _combo.getSelection()
-//						.get(0).getValueField().equals(
-//								se.getModel().getValueField());
-//				super.storeBeforeDataChanged(se);
-//			}
-
 			@Override
 			public void storeUpdate(StoreEvent<FilterField> se) {
 				if (_currentlySelectedFieldWillBeUpdated) {
-					FilterField ff = _combo.getStore().findModel("valueField",
-							se.getModel().getValueField());
+					FilterField ff = _combo.getStore().findModel("valueField", se.getModel().getValueField());
 					_combo.disableEvents(true);
 					ArrayList<FilterField> selection = new ArrayList<FilterField>();
 					selection.add(ff);
@@ -136,66 +125,50 @@ public class SimplePanel extends HorizontalPanel implements Filter {
 			}
 
 		});
-		// store.setMonitorChanges(true);
-		// store.setKeyProvider(new ModelKeyProvider<FilterField>() {
-		//
-		// @Override
-		// public String getKey(FilterField model) {
-		// return model.getValueField();
-		// }
-		// });
-
-		// store.add(fields);
 
 		_combo = new ComboBox<FilterField>();
-		_combo
-				.addSelectionChangedListener(new SelectionChangedListener<FilterField>() {
-					@Override
-					public void selectionChanged(
-							SelectionChangedEvent<FilterField> se) {
-						selectedField = se.getSelectedItem();
-						while (hp.getItemCount() > 2) {
-							hp.remove(hp.getWidget(2));
-						}
-						if (se.getSelectedItem() != null) {
-							_combo.removeStyleName("x-form-invalid");
-							_combo.setToolTip((ToolTipConfig) null);
-							List<Widget> w = se.getSelectedItem().getWidgets(
-									_model);
-							for (Widget widget : w) {
-								hp.add(widget);
-							}
-						} else {
-							_combo.setToolTip("Invalid field!");
-							_combo.addStyleName("x-form-invalid");
-						}
-						hp.layout(true);
-
+		_combo.addSelectionChangedListener(new SelectionChangedListener<FilterField>() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent<FilterField> se) {
+				selectedField = se.getSelectedItem();
+				while (hp.getItemCount() > 2) {
+					hp.remove(hp.getWidget(2));
+				}
+				if (se.getSelectedItem() != null) {
+					_combo.removeStyleName("x-form-invalid");
+					_combo.setToolTip((ToolTipConfig) null);
+					List<Widget> w = se.getSelectedItem().getWidgets(_model);
+					for (Widget widget : w) {
+						hp.add(widget);
 					}
-				});
+				} else {
+					_combo.setToolTip("Invalid field!");
+					_combo.addStyleName("x-form-invalid");
+				}
+				hp.layout(true);
+
+			}
+		});
 
 		_combo.setStore(store);
 		_combo.setTriggerAction(TriggerAction.ALL);
-		// _combo.setForceSelection(true);
+
 		_combo.setDisplayField("name");
 		_combo.setValueField("valueField");
 		_combo.setAllowBlank(false);
 		_combo.setEditable(false);
-		_combo
-				.addSelectionChangedListener(new SelectionChangedListener<FilterField>() {
+		_combo.addSelectionChangedListener(new SelectionChangedListener<FilterField>() {
 
-					@Override
-					public void selectionChanged(
-							SelectionChangedEvent<FilterField> se) {
-						// model.setField(se.getSelectedItem().getName());
-						if (se.getSelectedItem() != null) {
-							_model.setValueField(se.getSelectedItem()
-									.getValueField());
-						} else {
-							_model.setValueField(null);
-						}
-					}
-				});
+			@Override
+			public void selectionChanged(SelectionChangedEvent<FilterField> se) {
+				// model.setField(se.getSelectedItem().getName());
+				if (se.getSelectedItem() != null) {
+					_model.setValueField(se.getSelectedItem().getValueField());
+				} else {
+					_model.setValueField(null);
+				}
+			}
+		});
 
 		hp.add(_combo);
 
@@ -219,13 +192,9 @@ public class SimplePanel extends HorizontalPanel implements Filter {
 	@Override
 	public void setFilterExpression(FilterModel filterModel) {
 		_model = (SimpleModel) filterModel;
-		FilterField ff = _combo.getStore().findModel("valueField",
-				_model.getValueField());
+		FilterField ff = _combo.getStore().findModel("valueField", _model.getValueField());
 
 		if (ff == null) {
-			// combo.focus();
-			// combo.validate();
-			// combo.forceInvalid("Invalid field!");
 			selectedField = null;
 			_combo.setToolTip("Invalid field!");
 			_combo.addStyleName("x-form-invalid");
@@ -249,8 +218,7 @@ public class SimplePanel extends HorizontalPanel implements Filter {
 				add(widget);
 				if (i == 0) {
 					SimpleComboBox<String> comboS = (SimpleComboBox<String>) widget;
-					SimpleComboValue<String> val = comboS.getStore().findModel(
-							"value", _model.getOp());
+					SimpleComboValue<String> val = comboS.getStore().findModel("value", _model.getOp());
 					comboS.select(val);
 					ArrayList<SimpleComboValue<String>> selection2 = new ArrayList<SimpleComboValue<String>>();
 					selection2.add(val);
@@ -260,17 +228,38 @@ public class SimplePanel extends HorizontalPanel implements Filter {
 
 				if (i % 2 == 1) {
 					if (widget instanceof HorizontalPanel) {
-						((NumberField) ((HorizontalPanel) widget).getItem(0))
-								.setValue((Number) _model.getDatas().get(
-										dataIndexer++));
+						((NumberField) ((HorizontalPanel) widget).getItem(0)).setValue((Number) _model.getDatas().get(dataIndexer++));
 
 						if (_model.getDatas().size() > 1)
-							((NumberField) ((HorizontalPanel) widget)
-									.getItem(2)).setValue((Number) _model
-									.getDatas().get(dataIndexer++));
+							((NumberField) ((HorizontalPanel) widget).getItem(2)).setValue((Number) _model.getDatas().get(dataIndexer++));
 					} else if (widget instanceof TextField) {
-						((TextField) widget).setValue(_model.getDatas().get(
-								dataIndexer++));
+						if (!(_model.getDatas().get(dataIndexer) instanceof ModelData)) {
+							if (widget instanceof ComboBox) {
+								// ((ComboBox) widget).clearSelections();
+								// ((ComboBox) widget).clear();
+
+								final ComboBox comboBox = (ComboBox) widget;
+								if (comboBox.isRendered()) {
+									comboBox.setRawValue((String) _model.getDatas().get(dataIndexer++));
+								} else {
+									final int dataIndex = dataIndexer++;
+									
+									comboBox.addListener(Events.Render, new Listener<BaseEvent>() {
+
+										@Override
+										public void handleEvent(BaseEvent be) {
+											comboBox.setRawValue((String) _model.getDatas().get(dataIndex));
+											comboBox.removeListener(Events.Render, this);
+										}
+									});
+
+								}
+							} else {
+								((TextField) widget).setValue(_model.getDatas().get(dataIndexer++));
+							}
+						} else {
+							((TextField) widget).setValue(_model.getDatas().get(dataIndexer++));
+						}
 					}
 				}
 			}
@@ -280,51 +269,9 @@ public class SimplePanel extends HorizontalPanel implements Filter {
 		_panel.forceLayout();
 	}
 
-	// @Override
-	// public void addField(FilterField field) {
-	// store.add(field);
-	//
-	// }
+	@Override
+	public void prepareUpdateField(String id) {
+		_currentlySelectedFieldWillBeUpdated = _combo.getSelection().size() > 0 && _combo.getSelection().get(0).getValueField().equals(id);
+	}
 
-	// @Override
-	// public void updateField( String id, String newName) {
-	//
-	// // int index = store.indexOf(field);
-	// // store.remove(field);
-	// // store.insert(field, index);
-	// store.update(field);
-	//
-	// if (field.equals(selectedField)) {
-	// combo.setValue(field);
-	// }
-	//
-	// }
-
-	// @Override
-	// public void removeField(FilterField field) {
-	// if (field.equals(combo.getValue())) {
-	// combo.setToolTip("Invalid field!");
-	// combo.addStyleName("x-form-invalid");
-	// }
-	// // store.remove(field);
-	// }
-
-	
-	  @Override public void prepareUpdateField(String id) {
-	  _currentlySelectedFieldWillBeUpdated =  _combo.getSelection().size() > 0 &&_combo.getSelection().get(0)
-	  .getValueField().equals(id); }
-	 
-
-	// @Override
-	// public void updateField(String id) {
-	// if (_currentlySelectedFieldWillBeUpdated) {
-	// FilterField ff = _combo.getStore().findModel("valueField", id);
-	// _combo.disableEvents(true);
-	// ArrayList<FilterField> selection = new ArrayList<FilterField>();
-	// selection.add(ff);
-	// _combo.setSelection(selection);
-	// _combo.enableEvents(true);
-	// _combo.setValue(ff);
-	// }
-	// }
 }

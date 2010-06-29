@@ -33,7 +33,9 @@ import hu.bekesi.zoltan.filterBuilder.client.criteria.ComplexModel;
 import hu.bekesi.zoltan.filterBuilder.client.criteria.SimpleModel;
 import hu.bekesi.zoltan.filterBuilder.client.widgets.FilterBuilder;
 import hu.bekesi.zoltan.filterBuilder.client.widgets.fields.FilterField;
+import hu.bekesi.zoltan.filterBuilder.client.widgets.fields.FilterIsAField;
 import hu.bekesi.zoltan.filterBuilder.client.widgets.fields.FilterNumericField;
+import hu.bekesi.zoltan.filterBuilder.client.widgets.fields.FilterSetField;
 import hu.bekesi.zoltan.filterBuilder.client.widgets.fields.FilterTextField;
 
 import java.util.ArrayList;
@@ -72,8 +74,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 
 public class FilterBuilderExample implements EntryPoint {
-	private final GreetingServiceAsync greetingService = GWT
-			.create(GreetingService.class);
+	private final GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
 
 	public void onModuleLoad() {
 
@@ -144,8 +145,7 @@ public class FilterBuilderExample implements EntryPoint {
 				store.add(mm);
 				ArrayList<FilterField> fields = new ArrayList<FilterField>();
 
-				fields.add(new FilterTextField<ModelData>("val1", "Value1",
-						store, "val", "myid"));
+				fields.add(new FilterTextField<ModelData>("val1", "Value1", store, "val", "myid"));
 
 				// ///////////////////////////////////////////
 				final FilterBuilder fb = new FilterBuilder(fields);
@@ -228,16 +228,13 @@ public class FilterBuilderExample implements EntryPoint {
 				RpcProxy<ListLoadResult<ModelData>> proxy = new RpcProxy<ListLoadResult<ModelData>>() {
 
 					@Override
-					protected void load(Object loadConfig,
-							AsyncCallback<ListLoadResult<ModelData>> callback) {
-						greetingService.getData((ListLoadConfig) loadConfig,
-								callback);
+					protected void load(Object loadConfig, AsyncCallback<ListLoadResult<ModelData>> callback) {
+						greetingService.getData((ListLoadConfig) loadConfig, callback);
 
 					}
 				};
 
-				ListLoader<ListLoadResult<ModelData>> loader = new BaseListLoader<ListLoadResult<ModelData>>(
-						proxy);
+				ListLoader<ListLoadResult<ModelData>> loader = new BaseListLoader<ListLoadResult<ModelData>>(proxy);
 				ListStore<ModelData> bigStore = new ListStore<ModelData>(loader);
 
 				loader.addLoadListener(new LoadListener() {
@@ -321,7 +318,10 @@ public class FilterBuilderExample implements EntryPoint {
 				north.setHeight("Client side");
 				north.setLayout(new BorderLayout());
 				north.add(fb, new BorderLayoutData(LayoutRegion.NORTH));
-				w.add(north, new BorderLayoutData(LayoutRegion.NORTH));
+				
+				BorderLayoutData borderLayoutData = new BorderLayoutData(LayoutRegion.NORTH);
+				borderLayoutData.setSplit(true);
+				w.add(north, borderLayoutData);
 
 				ListStore<ModelData> bigStore = new ListStore<ModelData>();
 
@@ -362,114 +362,91 @@ public class FilterBuilderExample implements EntryPoint {
 				grid.setStripeRows(true);
 				w.add(grid, new BorderLayoutData(LayoutRegion.CENTER));
 
-				w.getHeader().addTool(
-						new ToolButton("x-tool-refresh",
-								new SelectionListener<IconButtonEvent>() {
+				w.getHeader().addTool(new ToolButton("x-tool-refresh", new SelectionListener<IconButtonEvent>() {
 
-									@Override
-									public void componentSelected(
-											IconButtonEvent ce) {
-										ComplexModel cm1 = new ComplexModel(
-												"OR");
-										SimpleModel sm1 = new SimpleModel(
-												fields.get(0).getValueField(),
-												"contains", "0");
-										SimpleModel sm2 = new SimpleModel(
-												fields.get(1).getValueField(),
-												"contains", "3");
-										ComplexModel cm2 = new ComplexModel(
-												"AND");
-										SimpleModel sm3 = new SimpleModel(
-												fields.get(2).getValueField(),
-												"contains", "5");
-										SimpleModel sm4 = new SimpleModel(
-												fields.get(3).getValueField(),
-												"contains", "3");
+					@Override
+					public void componentSelected(IconButtonEvent ce) {
+						ComplexModel cm1 = new ComplexModel("OR");
+						SimpleModel sm1 = new SimpleModel(fields.get(0).getValueField(), "contains", "0");
+						SimpleModel sm2 = new SimpleModel(fields.get(1).getValueField(), "contains", "3");
+						ComplexModel cm2 = new ComplexModel("AND");
+						SimpleModel sm3 = new SimpleModel(fields.get(2).getValueField(), "contains", "5");
+						SimpleModel sm4 = new SimpleModel(fields.get(3).getValueField(), "contains", "3");
 
-										BaseModelData m = null;
-										m = new BaseModelData();
-										m.set("id", "id5");
-										m.set("val", "val5");
+						BaseModelData m = null;
+						m = new BaseModelData();
+						m.set("id", "id5");
+						m.set("val", "val5");
 
-										SimpleModel sm5 = new SimpleModel(
-												fields.get(5).getValueField(),
-												"equals", m);
+						SimpleModel sm5 = new SimpleModel(fields.get(5).getValueField(), "equals", "String Value");
+						//SimpleModel sm5 = new SimpleModel(fields.get(5).getValueField(), ">=", "String Value");
 
-										m = new BaseModelData();
-										m.set("id", "id8");
-										m.set("val", "val8");
+						m = new BaseModelData();
+						m.set("id", "id8");
+						m.set("val", "val8");
 
-										SimpleModel sm6 = new SimpleModel(
-												fields.get(6).getValueField(),
-												"equals", m);
+						SimpleModel sm6 = new SimpleModel(fields.get(6).getValueField(), "equals", m);
 
-										cm1.getSubFilters().add(sm1);
-										cm1.getSubFilters().add(sm2);
-										cm2.getSubFilters().add(sm3);
-										cm2.getSubFilters().add(sm4);
-										cm2.getSubFilters().add(sm5);
-										cm2.getSubFilters().add(sm6);
-										cm1.getSubFilters().add(cm2);
-										fb.setFilterExpression(cm1);
-									}
-								}));
+						m = new BaseModelData();
+						m.set("id", "id2");
+						m.set("val", "val2");
+						
+						SimpleModel sm7 = new SimpleModel(fields.get(7).getValueField(), "not in", m);
+						SimpleModel sm8 = new SimpleModel(fields.get(8).getValueField(), "not is-a", m);
+						
+						cm1.getSubFilters().add(sm1);
+						cm1.getSubFilters().add(sm2);
+						cm2.getSubFilters().add(sm3);
+						cm2.getSubFilters().add(sm4);
+						cm2.getSubFilters().add(sm5);
+						cm2.getSubFilters().add(sm6);
+						cm1.getSubFilters().add(cm2);
+						cm1.getSubFilters().add(sm7);
+						cm1.getSubFilters().add(sm8);
+						fb.setFilterExpression(cm1);
+					}
+				}));
 
-				w.getHeader().addTool(
-						new ToolButton("x-tool-gear",
-								new SelectionListener<IconButtonEvent>() {
+				w.getHeader().addTool(new ToolButton("x-tool-gear", new SelectionListener<IconButtonEvent>() {
 
-									@Override
-									public void componentSelected(
-											IconButtonEvent ce) {
-										ComplexModel cm1 = new ComplexModel(
-												"OR");
-										SimpleModel sm1 = new SimpleModel(
-												//fields.get(0).getValueField(),
-												"val100",
-												"contains", "0");
-										SimpleModel sm2 = new SimpleModel(
-												fields.get(1).getValueField(),
-												"contains", "3");
-										ComplexModel cm2 = new ComplexModel(
-												"AND");
-										ArrayList<Object> objList = new ArrayList<Object>();
-										objList.add(new Integer(5));
-										objList.add(new Integer(7));
-										SimpleModel sm3 = new SimpleModel(
-												fields.get(4).getValueField(),
-												"between" ,  objList);
-										SimpleModel sm4 = new SimpleModel(
-												fields.get(3).getValueField(),
-												"contains", "3");
+					@Override
+					public void componentSelected(IconButtonEvent ce) {
+						ComplexModel cm1 = new ComplexModel("OR");
+						SimpleModel sm1 = new SimpleModel(
+						// fields.get(0).getValueField(),
+								"val100", "contains", "0");
+						SimpleModel sm2 = new SimpleModel(fields.get(1).getValueField(), "contains", "3");
+						ComplexModel cm2 = new ComplexModel("AND");
+						ArrayList<Object> objList = new ArrayList<Object>();
+						objList.add(new Integer(5));
+						objList.add(new Integer(7));
+						SimpleModel sm3 = new SimpleModel(fields.get(4).getValueField(), "between", objList);
+						SimpleModel sm4 = new SimpleModel(fields.get(4).getValueField(), "contains", "3");
 
-										BaseModelData m = null;
-										m = new BaseModelData();
-										m.set("id", "id5");
-										m.set("val", "val5");
+						BaseModelData m = null;
+						m = new BaseModelData();
+						m.set("id", "id5");
+						m.set("val", "val5");
 
-										SimpleModel sm5 = new SimpleModel(
-												fields.get(5).getValueField(),
-												"equals", m);
+						SimpleModel sm5 = new SimpleModel(fields.get(5).getValueField(), "equals", m);
 
-										m = new BaseModelData();
-										m.set("id", "id8");
-										m.set("val", "val8");
+						m = new BaseModelData();
+						m.set("id", "id8");
+						m.set("val", "val8");
 
-										SimpleModel sm6 = new SimpleModel(
-												fields.get(6).getValueField(),
-												"equals", m);
+						SimpleModel sm6 = new SimpleModel(fields.get(6).getValueField(), "equals", m);
 
-										cm1.getSubFilters().add(sm1);
-										cm1.getSubFilters().add(sm2);
-										cm2.getSubFilters().add(sm3);
-										cm2.getSubFilters().add(sm4);
-										cm2.getSubFilters().add(sm5);
-										cm2.getSubFilters().add(sm6);
-										cm1.getSubFilters().add(cm2);
-										fb.setFilterExpression(cm1);
-									}
-								}));
-				
+						cm1.getSubFilters().add(sm1);
+						cm1.getSubFilters().add(sm2);
+						cm2.getSubFilters().add(sm3);
+						cm2.getSubFilters().add(sm4);
+						cm2.getSubFilters().add(sm5);
+						cm2.getSubFilters().add(sm6);
+						cm1.getSubFilters().add(cm2);
+						fb.setFilterExpression(cm1);
+					}
+				}));
+
 				w.show();
 
 			}
@@ -538,43 +515,33 @@ public class FilterBuilderExample implements EntryPoint {
 				grid.setStripeRows(true);
 				w.add(grid, new BorderLayoutData(LayoutRegion.CENTER));
 
-				final FilterTextField<ModelData> addedField = new FilterTextField<ModelData>(
-						"val7", "val7");
-				w.getHeader().addTool(
-						new ToolButton("x-tool-plus",
-								new SelectionListener<IconButtonEvent>() {
+				final FilterTextField<ModelData> addedField = new FilterTextField<ModelData>("val7", "val7");
+				w.getHeader().addTool(new ToolButton("x-tool-plus", new SelectionListener<IconButtonEvent>() {
 
-									@Override
-									public void componentSelected(
-											IconButtonEvent ce) {
-										fb.addField(addedField);
-									}
-								}));
+					@Override
+					public void componentSelected(IconButtonEvent ce) {
+						fb.addField(addedField);
+					}
+				}));
 
-				w.getHeader().addTool(
-						new ToolButton("x-tool-minus",
-								new SelectionListener<IconButtonEvent>() {
+				w.getHeader().addTool(new ToolButton("x-tool-minus", new SelectionListener<IconButtonEvent>() {
 
-									@Override
-									public void componentSelected(
-											IconButtonEvent ce) {
-										fb.removeField(addedField);
-									}
-								}));
-				
-				w.getHeader().addTool(
-						new ToolButton("x-tool-refresh",
-								new SelectionListener<IconButtonEvent>() {
+					@Override
+					public void componentSelected(IconButtonEvent ce) {
+						fb.removeField(addedField);
+					}
+				}));
 
-									@Override
-									public void componentSelected(
-											IconButtonEvent ce) {
-										//addedField.setName(addedField.getName() + 1);
-										//fb.updateField(addedField);
-										fb.updateFieldName(addedField.getValueField(), addedField.getName() + 1);
-									}
-								}));
-				
+				w.getHeader().addTool(new ToolButton("x-tool-refresh", new SelectionListener<IconButtonEvent>() {
+
+					@Override
+					public void componentSelected(IconButtonEvent ce) {
+						// addedField.setName(addedField.getName() + 1);
+						// fb.updateField(addedField);
+						fb.updateFieldName(addedField.getValueField(), addedField.getName() + 1);
+					}
+				}));
+
 				w.show();
 
 			}
@@ -624,29 +591,48 @@ public class FilterBuilderExample implements EntryPoint {
 		fields.add(new FilterNumericField<ModelData>("val5", "val5"));
 
 		// fields.add(new FilterTextField("id1", "name1"));
-		fields.add(new FilterTextField<ModelData>("id2", "name2", store, "val",
-				"id"));
+		fields.add(new FilterTextField<ModelData>("id2", "name2", store, "val", "id"));
 
 		RpcProxy<PagingLoadResult<BaseModelData>> proxy = new RpcProxy<PagingLoadResult<BaseModelData>>() {
 			@Override
-			public void load(Object loadConfig,
-					AsyncCallback<PagingLoadResult<BaseModelData>> callback) {
+			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<BaseModelData>> callback) {
 				// service.getPosts((PagingLoadConfig) loadConfig, callback);
-				greetingService.getSearchData((PagingLoadConfig) loadConfig,
-						callback);
+				greetingService.getSearchData((PagingLoadConfig) loadConfig, callback);
 			}
 		};
 
 		// loader
-		final PagingLoader<PagingLoadResult<BaseModelData>> loader = new BasePagingLoader<PagingLoadResult<BaseModelData>>(
-				proxy);
+		final PagingLoader<PagingLoadResult<BaseModelData>> loader = new BasePagingLoader<PagingLoadResult<BaseModelData>>(proxy);
 		loader.setRemoteSort(true);
 
 		ListStore<BaseModelData> store2 = new ListStore<BaseModelData>(loader);
 
-		fields.add(new FilterTextField<BaseModelData>("id3", "name3", store2,
-				"val", "id"));
+		fields.add(new FilterTextField<BaseModelData>("id3", "name3", store2, "val", "id"));
 
+		
+		store = new ListStore<ModelData>();
+		m = new BaseModelData();
+		m.set("id", "id1");
+		m.set("val", "val1");
+		store.add(m);
+		m = new BaseModelData();
+		m.set("id", "id2");
+		m.set("val", "val2");
+		store.add(m);
+		fields.add(new FilterSetField<ModelData>("setid", "set", store, "val", "id"));
+		
+		store = new ListStore<ModelData>();
+		m = new BaseModelData();
+		m.set("id", "id1");
+		m.set("val", "val1");
+		store.add(m);
+		m = new BaseModelData();
+		m.set("id", "id2");
+		m.set("val", "val2");
+		store.add(m);
+		fields.add(new FilterIsAField<ModelData>("isaid", "isa", store, "val", "id"));
+		
+		
 		return fields;
 	}
 
