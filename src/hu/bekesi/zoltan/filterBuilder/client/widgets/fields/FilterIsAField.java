@@ -53,7 +53,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.form.ComboBox.TriggerAction;
 import com.google.gwt.user.client.ui.Widget;
 
-public class FilterTextField<M extends ModelData> extends FilterField {
+public class FilterIsAField<M extends ModelData> extends FilterField {
 
 	private static final long serialVersionUID = 1350088696367002710L;
 
@@ -61,15 +61,15 @@ public class FilterTextField<M extends ModelData> extends FilterField {
 	String _comboDisplayField = null;
 	String _comboValueField = null;
 	
-	public FilterTextField() {
+	public FilterIsAField() {
 
 	}
 
-	public FilterTextField(String valueField_, String name_) {
-		super(valueField_, name_);
-	}
+//	public FilterIsAField(String valueField_, String name_) {
+//		super(valueField_, name_);
+//	}
 
-	public FilterTextField(String valueField_, String name_, ListStore<M> store_, String comboDisplayField_, String comboValueField_) {
+	public FilterIsAField(String valueField_, String name_, ListStore<M> store_, String comboDisplayField_, String comboValueField_) {
 		super(valueField_, name_);
 		_store = store_;
 		_comboDisplayField = comboDisplayField_;
@@ -87,18 +87,13 @@ public class FilterTextField<M extends ModelData> extends FilterField {
 		combo.setEditable(false);
 		combo.setTriggerAction(TriggerAction.ALL);
 
-		combo.add("equals");
-		combo.add("not equals");
-		combo.add("contains");
-		combo.add("starts with");
-		combo.add("ends with");
-		combo.add("does not contain");
-		combo.add("does not start with");
-		combo.add("does not end with");
-		combo.setSimpleValue("equals");
+		combo.add("is-a");
+		combo.add("not is-a");
+
+		combo.setSimpleValue("in");
 
 		if (model_.getOp() == null)
-			model_.setOp("equals");
+			model_.setOp("is-a");
 		
 		
 		combo.addSelectionChangedListener(new SelectionChangedListener<SimpleComboValue<String>>() {
@@ -118,7 +113,7 @@ public class FilterTextField<M extends ModelData> extends FilterField {
 			_comboBox.setDisplayField(_comboDisplayField);
 			_comboBox.setValueField(_comboValueField);
 			_comboBox.select(0);
-			
+			_comboBox.setEditable(false);
 			_comboBox.setTypeAhead(false);
 			_comboBox.setTriggerAction(TriggerAction.ALL);
 			
