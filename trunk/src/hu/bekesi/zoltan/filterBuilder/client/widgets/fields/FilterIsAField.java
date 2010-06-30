@@ -90,7 +90,7 @@ public class FilterIsAField<M extends ModelData> extends FilterField {
 		combo.add("is-a");
 		combo.add("not is-a");
 
-		combo.setSimpleValue("in");
+		combo.setSimpleValue("is-a");
 
 		if (model_.getOp() == null)
 			model_.setOp("is-a");
