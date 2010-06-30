@@ -39,6 +39,7 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.HideMode;
 import com.extjs.gxt.ui.client.Style.IconAlign;
+import com.extjs.gxt.ui.client.core.XTemplate;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.ModelKeyProvider;
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -75,12 +76,13 @@ public class SimplePanel extends HorizontalPanel implements Filter {
 
 	FilterField selectedField = null;
 	boolean _currentlySelectedFieldWillBeUpdated = false;
-
-	public SimplePanel(final VerticalPanel verticalPanel, final FilterPanel panel, ListStore<FilterField> store) {
+	XTemplate _comboBoxTemplate;
+	
+	public SimplePanel(final VerticalPanel verticalPanel, final FilterPanel panel, ListStore<FilterField> store,XTemplate comboBoxTemplate) {
 		final SimplePanel hp = this;
 		_panel = panel;
 		_model = new SimpleModel(store.getAt(0).getValueField());
-
+		_comboBoxTemplate = comboBoxTemplate;
 		Button minus = new Button();// "-");
 
 		minus.setIcon(ICONS.delete());
@@ -157,6 +159,12 @@ public class SimplePanel extends HorizontalPanel implements Filter {
 		_combo.setValueField("valueField");
 		_combo.setAllowBlank(false);
 		_combo.setEditable(false);
+		
+		if(_comboBoxTemplate != null)
+		{
+			_combo.setTemplate(_comboBoxTemplate);
+		}
+		
 		_combo.addSelectionChangedListener(new SelectionChangedListener<FilterField>() {
 
 			@Override

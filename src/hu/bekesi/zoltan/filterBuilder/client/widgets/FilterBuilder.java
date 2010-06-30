@@ -34,6 +34,7 @@ import hu.bekesi.zoltan.filterBuilder.client.widgets.fields.FilterField;
 
 import java.util.List;
 
+import com.extjs.gxt.ui.client.core.XTemplate;
 import com.extjs.gxt.ui.client.data.BaseListLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.Loader;
@@ -58,11 +59,16 @@ public class FilterBuilder extends VerticalPanel {
 	}
 
 	public FilterBuilder(List<FilterField> fields_, boolean showButtons) {
+		this(fields_,showButtons,null);
+	}
+	
+	public FilterBuilder(List<FilterField> fields_, boolean showButtons, XTemplate comboBoxTemplate) {
+	
 
 		filterStore = new ListStore<FilterField>();
 		filterStore.add(fields_);
 		filterStore.setMonitorChanges(true);
-		filterPanel = new FilterPanel(filterStore);
+		filterPanel = new FilterPanel(filterStore,comboBoxTemplate);
 		this.add(filterPanel);
 		if (showButtons) {
 			HorizontalPanel temp = new HorizontalPanel();
