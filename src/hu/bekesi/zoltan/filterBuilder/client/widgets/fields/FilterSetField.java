@@ -119,6 +119,7 @@ public class FilterSetField<M extends ModelData> extends FilterField {
 			
 			if (_store.getLoader() != null) {
 				_comboBox.setPageSize(10);
+				_comboBox.setMinListWidth(350);
 			}
 			widgets.add(_comboBox);
 			_comboBox.addSelectionChangedListener(new SelectionChangedListener<M>() {
