@@ -158,6 +158,7 @@ public class FilterNumericField<M extends ModelData> extends FilterField {
 
 						if (_store.getLoader() != null) {
 							comboBox.setPageSize(10);
+							comboBox.setMinListWidth(350);
 						}
 						hp.add(comboBox);
 					} else {
@@ -228,6 +229,7 @@ public class FilterNumericField<M extends ModelData> extends FilterField {
 
 			if (_store.getLoader() != null) {
 				comboBox.setPageSize(10);
+				comboBox.setMinListWidth(350);
 			}
 			widgets.add(comboBox);
 		} else {
