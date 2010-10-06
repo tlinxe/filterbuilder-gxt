@@ -29,14 +29,16 @@
 
 package hu.bekesi.zoltan.filterBuilder.client.criteria;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.data.BaseModelData;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.store.Store;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class SimpleModel extends BaseModelData implements FilterModel {
+public class SimpleModel extends BaseModelData implements FilterModel,IsSerializable, Serializable {
 
 	private static final long serialVersionUID = 6628883511737728991L;
 

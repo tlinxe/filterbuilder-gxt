@@ -29,9 +29,12 @@
 
 package hu.bekesi.zoltan.filterBuilder.client.criteria;
 
+import java.io.Serializable;
+
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.store.StoreFilter;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
-public interface FilterModel extends StoreFilter<ModelData>{
+public interface FilterModel extends StoreFilter<ModelData>, IsSerializable, Serializable{
  public boolean filter(ModelData model);
 }
