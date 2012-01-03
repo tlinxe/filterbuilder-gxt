@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright 2011 Zoltan Bekesi
+ *   Copyright 2011 Bryn Ryans
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -17,22 +17,27 @@
  *   NOTICE THE GXT ( Ext-GWT ) LIBRARY IS A GPL v3 LICENCED PRODUCT.
  *   FIND OUT MORE ON:  http://www.sencha.com/license
  *
- *   Author : Zoltan Bekesi<bekesizoltan@gmail.com>
+ *   Author : Bryn Ryans<snayrb99@gmail.com>
  *
  * */
 
-package hu.bekesi.zoltan.filterBuilder.client.icons;
+package hu.bekesi.zoltan.filterBuilder.client.widgets;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ImageBundle;
+import hu.bekesi.zoltan.filterBuilder.client.criteria.SimpleModel;
+import hu.bekesi.zoltan.filterBuilder.client.widgets.fields.FilterField;
 
-@SuppressWarnings("deprecation")
-public interface FilterBuilderIcons extends ImageBundle {
+import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.widget.form.Field;
 
-	@Resource("add.gif")
-	AbstractImagePrototype add();
+/**
+ * Interface that builds left hand side component of a comparison
+ */
+public interface LeftHandFieldBuilder {
 
-	@Resource("delete.gif")
-	AbstractImagePrototype delete();
+	Field<FilterField> create(ListStore<FilterField> store, SimplePanel hp, SimpleModel simpleModel);
+
+	void setFilterExpression(SimpleModel _model, Field<FilterField> field, SimplePanel hp);
+
+	void prepareUpdateField(String id, Field<FilterField> field);
 
 }

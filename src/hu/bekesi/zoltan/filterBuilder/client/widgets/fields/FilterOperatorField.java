@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright 2011 Zoltan Bekesi
+ *   Copyright 2011 Bryn Ryans
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  *   NOTICE THE GXT ( Ext-GWT ) LIBRARY IS A GPL v3 LICENCED PRODUCT.
  *   FIND OUT MORE ON:  http://www.sencha.com/license
  *
- *   Author : Zoltan Bekesi<bekesizoltan@gmail.com>
+ *   Author : Bryn Ryans<snayrb99@gmail.com>
  *
  * */
 
@@ -48,7 +48,7 @@ import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.google.gwt.user.client.ui.Widget;
 
-public class FilterTextField<M extends ModelData> extends FilterField {
+public class FilterOperatorField<M extends ModelData> extends FilterField {
 
 	private static final long serialVersionUID = 1350088696367002710L;
 
@@ -56,15 +56,15 @@ public class FilterTextField<M extends ModelData> extends FilterField {
 	private String _comboDisplayField = null;
 	private String _comboValueField = null;
 
-	public FilterTextField() {
+	public FilterOperatorField() {
 
 	}
 
-	public FilterTextField(String valueField_, String name_) {
+	public FilterOperatorField(String valueField_, String name_) {
 		super(valueField_, name_);
 	}
 
-	public FilterTextField(String valueField_, String name_, ListStore<M> store_, String comboDisplayField_, String comboValueField_) {
+	public FilterOperatorField(String valueField_, String name_, ListStore<M> store_, String comboDisplayField_, String comboValueField_) {
 		super(valueField_, name_);
 		_store = store_;
 		_comboDisplayField = comboDisplayField_;
@@ -82,19 +82,18 @@ public class FilterTextField<M extends ModelData> extends FilterField {
 		combo.setEditable(false);
 		combo.setTriggerAction(TriggerAction.ALL);
 
-		combo.add(ResourceHelper.getResources().equals(), "equals");
-		combo.add(ResourceHelper.getResources().not_equals(), "not equals");
-		combo.add(ResourceHelper.getResources().contains(), "contains");
-		combo.add(ResourceHelper.getResources().starts_with(), "starts with");
-		combo.add(ResourceHelper.getResources().ends_with(), "ends with");
-		combo.add(ResourceHelper.getResources().does_not_contain(), "does not contain");
-		combo.add(ResourceHelper.getResources().does_not_start_with(), "does not start with");
-		combo.add(ResourceHelper.getResources().does_not_end_with(), "does not end with");
-		combo.setSimpleValue("equals");
+		combo.add(ResourceHelper.getResources().text_eq(), "eq");
+		combo.add(ResourceHelper.getResources().text_ne(), "ne");
+		combo.add(ResourceHelper.getResources().text_gt(), "gt");
+		combo.add(ResourceHelper.getResources().text_ge(), "ge");
+		combo.add(ResourceHelper.getResources().text_lt(), "lt");
+		combo.add(ResourceHelper.getResources().text_le(), "le");
 
-		if (model_.getOp() == null)
-			model_.setOp("equals");
+		if (model_.getOp() == null) {
+			model_.setOp("eq");
+		}
 
+		combo.setValue(combo.getStore().getAt(0));
 
 		combo.addSelectionChangedListener(new SelectionChangedListener<SimpleComboValue<String>>() {
 
@@ -169,6 +168,10 @@ public class FilterTextField<M extends ModelData> extends FilterField {
 		}
 		return widgets;
 
+	}
+
+	public String toString() {
+		return get("valueField");
 	}
 
 }

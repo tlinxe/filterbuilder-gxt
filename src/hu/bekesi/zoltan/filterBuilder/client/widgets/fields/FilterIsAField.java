@@ -1,5 +1,5 @@
 /*
- * 
+ *
  *   Copyright 2011 Zoltan Bekesi
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,13 +18,15 @@
  *   FIND OUT MORE ON:  http://www.sencha.com/license
  *
  *   Author : Zoltan Bekesi<bekesizoltan@gmail.com>
- * 
+ *
  * */
 
 package hu.bekesi.zoltan.filterBuilder.client.widgets.fields;
 
 import hu.bekesi.zoltan.filterBuilder.client.criteria.SimpleModel;
+import hu.bekesi.zoltan.filterBuilder.client.resources.ResourceHelper;
 import hu.bekesi.zoltan.filterBuilder.client.widgets.ComboBoxHelper;
+import hu.bekesi.zoltan.filterBuilder.client.widgets.I18NSimpleComboBox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,20 +43,19 @@ import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.DelayedTask;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
-import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
+import com.extjs.gxt.ui.client.widget.form.ComboBox.TriggerAction;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.extjs.gxt.ui.client.widget.form.ComboBox.TriggerAction;
 import com.google.gwt.user.client.ui.Widget;
 
 public class FilterIsAField<M extends ModelData> extends FilterField {
 
 	private static final long serialVersionUID = 1350088696367002710L;
 
-	ListStore<M> _store = null;
-	String _comboDisplayField = null;
-	String _comboValueField = null;
-	
+	private ListStore<M> _store = null;
+	private String _comboDisplayField = null;
+	private String _comboValueField = null;
+
 	public FilterIsAField() {
 
 	}
@@ -75,21 +76,21 @@ public class FilterIsAField<M extends ModelData> extends FilterField {
 
 		ArrayList<Widget> widgets = new ArrayList<Widget>();
 
-		SimpleComboBox<String> combo = new SimpleComboBox<String>();
+		I18NSimpleComboBox combo = new I18NSimpleComboBox();
 		combo.setWidth(135);
 		combo.setForceSelection(true);
 		combo.setEditable(false);
 		combo.setTriggerAction(TriggerAction.ALL);
 
-		combo.add("is-a");
-		combo.add("not is-a");
+		combo.add(ResourceHelper.getResources().is_a(), "is-a");
+		combo.add(ResourceHelper.getResources().not_is_a(), "not is-a");
 
 		combo.setSimpleValue("is-a");
 
 		if (model_.getOp() == null)
 			model_.setOp("is-a");
-		
-		
+
+
 		combo.addSelectionChangedListener(new SelectionChangedListener<SimpleComboValue<String>>() {
 
 			@Override
@@ -110,7 +111,7 @@ public class FilterIsAField<M extends ModelData> extends FilterField {
 			_comboBox.setEditable(false);
 			_comboBox.setTypeAhead(false);
 			_comboBox.setTriggerAction(TriggerAction.ALL);
-			
+
 			if (_store.getLoader() != null) {
 				_comboBox.setPageSize(10);
 				_comboBox.setMinListWidth(350);
@@ -120,33 +121,31 @@ public class FilterIsAField<M extends ModelData> extends FilterField {
 
 				@Override
 				public void selectionChanged(SelectionChangedEvent<M> se) {
-					if (model_.getDatas().size() > 0)
-						model_.getDatas().remove(0);
-					model_.getDatas().add(_comboBox.getSelection().get(0));
+					model_.removeData(0);
+					model_.addData(_comboBox.getSelection().get(0));
 				}
 			});
-			
-			
+
+
 			final DelayedTask _setValueTask = new DelayedTask(new Listener<BaseEvent>() {
 
 				@Override
 				public void handleEvent(BaseEvent be) {
-					
-					if (model_.getDatas().size() > 0)
-						model_.getDatas().remove(0);
-					model_.getDatas().add(ComboBoxHelper.getComboBoxRealValue(_comboBox));
+
+					model_.removeData(0);
+					model_.addData(ComboBoxHelper.getComboBoxRealValue(_comboBox));
 				}
 			});
-			
+
 			_comboBox.addKeyListener(new KeyListener(){
-				
+
 				@Override
 				public void componentKeyPress(ComponentEvent event) {
 					super.componentKeyPress(event);
 					_setValueTask.delay(250);
 				}
 			});
-			
+
 
 		} else {
 
@@ -156,9 +155,8 @@ public class FilterIsAField<M extends ModelData> extends FilterField {
 
 				@Override
 				public void handleEvent(FieldEvent be) {
-					if (model_.getDatas().size() > 0)
-						model_.getDatas().remove(0);
-					model_.getDatas().add(be.getValue());
+					model_.removeData(0);
+					model_.addData(be.getValue());
 
 				}
 			});

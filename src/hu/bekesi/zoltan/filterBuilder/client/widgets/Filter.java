@@ -1,5 +1,5 @@
 /*
- * 
+ *
  *   Copyright 2011 Zoltan Bekesi
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,22 +18,21 @@
  *   FIND OUT MORE ON:  http://www.sencha.com/license
  *
  *   Author : Zoltan Bekesi<bekesizoltan@gmail.com>
- * 
+ *
  * */
 
 package hu.bekesi.zoltan.filterBuilder.client.widgets;
 
 import hu.bekesi.zoltan.filterBuilder.client.criteria.FilterModel;
-import hu.bekesi.zoltan.filterBuilder.client.widgets.fields.FilterField;
 
 
 
 public interface Filter {
+
 	FilterModel getFilterModel();
+
 	void setFilterExpression(FilterModel complexModel);
-	
-	 
+
 	void prepareUpdateField(String id);
-	//void updateField( String id);
-	 
+
 }

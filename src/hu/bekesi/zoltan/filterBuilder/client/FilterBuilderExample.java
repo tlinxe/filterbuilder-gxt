@@ -1,5 +1,5 @@
 /*
- * 
+ *
  *   Copyright 2011 Zoltan Bekesi
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
  *   FIND OUT MORE ON:  http://www.sencha.com/license
  *
  *   Author : Zoltan Bekesi<bekesizoltan@gmail.com>
- * 
+ *
  * */
 
 package hu.bekesi.zoltan.filterBuilder.client;
@@ -35,7 +35,6 @@ import hu.bekesi.zoltan.filterBuilder.client.widgets.fields.FilterTextField;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.data.BaseListLoader;
 import com.extjs.gxt.ui.client.data.BaseModelData;
 import com.extjs.gxt.ui.client.data.BasePagingLoader;
@@ -53,15 +52,14 @@ import com.extjs.gxt.ui.client.event.IconButtonEvent;
 import com.extjs.gxt.ui.client.event.LoadListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
-import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.button.ToolButton;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
-import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
-import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.layout.AnchorData;
+import com.extjs.gxt.ui.client.widget.layout.AnchorLayout;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -87,10 +85,11 @@ public class FilterBuilderExample implements EntryPoint {
 			public void componentSelected(ButtonEvent ce) {
 
 				Window w = new Window();
+				w.setHeading("Client side Combos");
 				w.setModal(true);
 				w.setWidth(1500);
 				w.setHeight(800);
-				w.setLayout(new BorderLayout());
+				w.setLayout(new AnchorLayout());
 
 				// ////////////////////////////////////////
 
@@ -144,12 +143,7 @@ public class FilterBuilderExample implements EntryPoint {
 				// ///////////////////////////////////////////
 				final FilterBuilder fb = new FilterBuilder(fields);
 
-				ContentPanel north = new ContentPanel();
-				north.setHeaderVisible(true);
-				north.setHeight("Client side Combos");
-				north.setLayout(new BorderLayout());
-				north.add(fb, new BorderLayoutData(LayoutRegion.NORTH));
-				w.add(north, new BorderLayoutData(LayoutRegion.NORTH));
+				w.add(fb, new AnchorData("100% 30%"));
 
 				ListStore<ModelData> bigStore = new ListStore<ModelData>();
 
@@ -189,7 +183,7 @@ public class FilterBuilderExample implements EntryPoint {
 				grid.setAutoExpandColumn("fid");
 				grid.setBorders(true);
 				grid.setStripeRows(true);
-				w.add(grid, new BorderLayoutData(LayoutRegion.CENTER));
+				w.add(grid, new AnchorData("100% 70%"));
 
 				w.show();
 
@@ -207,17 +201,13 @@ public class FilterBuilderExample implements EntryPoint {
 			public void componentSelected(ButtonEvent ce) {
 
 				Window w = new Window();
+				w.setHeading("Server side");
 				w.setModal(true);
 				w.setWidth(1500);
 				w.setHeight(800);
-				w.setLayout(new BorderLayout());
+				w.setLayout(new AnchorLayout());
 				final FilterBuilder fb = new FilterBuilder(getFields());
-				ContentPanel north = new ContentPanel();
-				north.setHeaderVisible(true);
-				north.setHeight("Client side");
-				north.setLayout(new BorderLayout());
-				north.add(fb, new BorderLayoutData(LayoutRegion.NORTH));
-				w.add(north, new BorderLayoutData(LayoutRegion.NORTH));
+				w.add(fb, new AnchorData("100% 30%"));
 
 				RpcProxy<ListLoadResult<ModelData>> proxy = new RpcProxy<ListLoadResult<ModelData>>() {
 
@@ -282,7 +272,7 @@ public class FilterBuilderExample implements EntryPoint {
 				grid.setAutoExpandColumn("fid");
 				grid.setBorders(true);
 				grid.setStripeRows(true);
-				w.add(grid, new BorderLayoutData(LayoutRegion.CENTER));
+				w.add(grid, new AnchorData("100% 70%"));
 
 				w.show();
 				loader.load();
@@ -299,23 +289,15 @@ public class FilterBuilderExample implements EntryPoint {
 			public void componentSelected(ButtonEvent ce) {
 
 				Window w = new Window();
+				w.setHeading("Client Side Loadable Grid");
 				w.setModal(true);
 				w.setWidth(1500);
 				w.setHeight(800);
-				w.setLayout(new BorderLayout());
+				w.setLayout(new AnchorLayout());
 
 				final ArrayList<FilterField> fields = getFields();
-
 				final FilterBuilder fb = new FilterBuilder(fields);
-				ContentPanel north = new ContentPanel();
-				north.setHeaderVisible(true);
-				north.setHeight("Client side");
-				north.setLayout(new BorderLayout());
-				north.add(fb, new BorderLayoutData(LayoutRegion.NORTH));
-				
-				BorderLayoutData borderLayoutData = new BorderLayoutData(LayoutRegion.NORTH);
-				borderLayoutData.setSplit(true);
-				w.add(north, borderLayoutData);
+				w.add(fb, new AnchorData("100% 30%"));
 
 				ListStore<ModelData> bigStore = new ListStore<ModelData>();
 
@@ -354,7 +336,7 @@ public class FilterBuilderExample implements EntryPoint {
 				grid.setAutoExpandColumn("fid");
 				grid.setBorders(true);
 				grid.setStripeRows(true);
-				w.add(grid, new BorderLayoutData(LayoutRegion.CENTER));
+				w.add(grid, new AnchorData("100% 70%"));
 
 				w.getHeader().addTool(new ToolButton("x-tool-refresh", new SelectionListener<IconButtonEvent>() {
 
@@ -384,10 +366,10 @@ public class FilterBuilderExample implements EntryPoint {
 						m = new BaseModelData();
 						m.set("id", "id2");
 						m.set("val", "val2");
-						
+
 						SimpleModel sm7 = new SimpleModel(fields.get(7).getValueField(), "not in", m);
 						SimpleModel sm8 = new SimpleModel(fields.get(8).getValueField(), "not is-a", m);
-						
+
 						cm1.getSubFilters().add(sm1);
 						cm1.getSubFilters().add(sm2);
 						cm2.getSubFilters().add(sm3);
@@ -457,17 +439,13 @@ public class FilterBuilderExample implements EntryPoint {
 			public void componentSelected(ButtonEvent ce) {
 
 				Window w = new Window();
+				w.setHeading("Client side");
 				w.setModal(true);
 				w.setWidth(1500);
 				w.setHeight(800);
-				w.setLayout(new BorderLayout());
+				w.setLayout(new AnchorLayout());
 				final FilterBuilder fb = new FilterBuilder(getFields());
-				ContentPanel north = new ContentPanel();
-				north.setHeaderVisible(true);
-				north.setHeight("Client side");
-				north.setLayout(new BorderLayout());
-				north.add(fb, new BorderLayoutData(LayoutRegion.NORTH));
-				w.add(north, new BorderLayoutData(LayoutRegion.NORTH));
+				w.add(fb, new AnchorData("100% 30%"));
 
 				ListStore<ModelData> bigStore = new ListStore<ModelData>();
 
@@ -507,7 +485,7 @@ public class FilterBuilderExample implements EntryPoint {
 				grid.setAutoExpandColumn("fid");
 				grid.setBorders(true);
 				grid.setStripeRows(true);
-				w.add(grid, new BorderLayoutData(LayoutRegion.CENTER));
+				w.add(grid, new AnchorData("100% 70%"));
 
 				final FilterTextField<ModelData> addedField = new FilterTextField<ModelData>("val7", "val7");
 				w.getHeader().addTool(new ToolButton("x-tool-plus", new SelectionListener<IconButtonEvent>() {
@@ -603,7 +581,7 @@ public class FilterBuilderExample implements EntryPoint {
 
 		fields.add(new FilterTextField<BaseModelData>("id3", "name3", store2, "val", "id"));
 
-		
+
 		store = new ListStore<ModelData>();
 		m = new BaseModelData();
 		m.set("id", "id1");
@@ -614,7 +592,7 @@ public class FilterBuilderExample implements EntryPoint {
 		m.set("val", "val2");
 		store.add(m);
 		fields.add(new FilterSetField<ModelData>("setid", "set", store, "val", "id"));
-		
+
 		store = new ListStore<ModelData>();
 		m = new BaseModelData();
 		m.set("id", "id1");
@@ -625,8 +603,8 @@ public class FilterBuilderExample implements EntryPoint {
 		m.set("val", "val2");
 		store.add(m);
 		fields.add(new FilterIsAField<ModelData>("isaid", "isa", store, "val", "id"));
-		
-		
+
+
 		return fields;
 	}
 

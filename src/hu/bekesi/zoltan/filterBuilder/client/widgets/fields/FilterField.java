@@ -1,5 +1,5 @@
 /*
- * 
+ *
  *   Copyright 2011 Zoltan Bekesi
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
  *   FIND OUT MORE ON:  http://www.sencha.com/license
  *
  *   Author : Zoltan Bekesi<bekesizoltan@gmail.com>
- * 
+ *
  * */
 
 package hu.bekesi.zoltan.filterBuilder.client.widgets.fields;
@@ -34,19 +34,16 @@ public abstract class FilterField extends BaseModelData {
 
 	private static final long serialVersionUID = -8547150803166450116L;
 
-	FilterField field;
-	
 	public FilterField() {
-	
+
 	}
-	
+
 	public FilterField(String valueField, String name)
 	{
 		setValueField(valueField);
 		setName(name);
-		field = this;
 	}
-	
+
 	public String getName() {
 		return get("name");
 	}
@@ -64,7 +61,7 @@ public abstract class FilterField extends BaseModelData {
 	}
 
 //public abstract List<Widget> getWidgets();
-	
+
 	public abstract List<Widget> getWidgets(SimpleModel model);
-	
+
 }

@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright 2011 Zoltan Bekesi
+ *   Copyright 2011 Bryn Ryans
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -17,22 +17,30 @@
  *   NOTICE THE GXT ( Ext-GWT ) LIBRARY IS A GPL v3 LICENCED PRODUCT.
  *   FIND OUT MORE ON:  http://www.sencha.com/license
  *
- *   Author : Zoltan Bekesi<bekesizoltan@gmail.com>
+ *   Author : Bryn Ryans<snayrb99@gmail.com>
  *
  * */
+package hu.bekesi.zoltan.filterBuilder.client.resources;
 
-package hu.bekesi.zoltan.filterBuilder.client.icons;
+import com.google.gwt.core.client.GWT;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ImageBundle;
+/**
+ * Access I18N resources
+ *
+ */
+public class ResourceHelper {
 
-@SuppressWarnings("deprecation")
-public interface FilterBuilderIcons extends ImageBundle {
+	private static FBResource RESOURCES;
 
-	@Resource("add.gif")
-	AbstractImagePrototype add();
+	public static FBResource getResources() {
+		if (RESOURCES == null) {
+			RESOURCES = (FBResource) GWT.create(FBResource.class);
+		}
+		return RESOURCES;
+	}
 
-	@Resource("delete.gif")
-	AbstractImagePrototype delete();
+	public static String getInvalidFieldMessage() {
+		return getResources().invalid_field();
+	}
 
 }
