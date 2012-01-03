@@ -1,5 +1,5 @@
 /*
- * 
+ *
  *   Copyright 2011 Zoltan Bekesi
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,13 +18,15 @@
  *   FIND OUT MORE ON:  http://www.sencha.com/license
  *
  *   Author : Zoltan Bekesi<bekesizoltan@gmail.com>
- * 
+ *
  * */
 
 package hu.bekesi.zoltan.filterBuilder.client.widgets.fields;
 
 import hu.bekesi.zoltan.filterBuilder.client.criteria.SimpleModel;
+import hu.bekesi.zoltan.filterBuilder.client.resources.ResourceHelper;
 import hu.bekesi.zoltan.filterBuilder.client.widgets.ComboBoxHelper;
+import hu.bekesi.zoltan.filterBuilder.client.widgets.I18NSimpleComboBox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,19 +44,18 @@ import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.DelayedTask;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
-import com.extjs.gxt.ui.client.widget.form.NumberField;
-import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
-import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
 import com.extjs.gxt.ui.client.widget.form.ComboBox.TriggerAction;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
+import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class FilterNumericField<M extends ModelData> extends FilterField {
 
 	private static final long serialVersionUID = 3824718298117696798L;
-	ListStore<M> _store = null;
-	String _comboDisplayField = null;
-	String _comboValueField = null;
+	private ListStore<M> _store = null;
+	private String _comboDisplayField = null;
+	private String _comboValueField = null;
 
 	public FilterNumericField() {
 
@@ -79,7 +80,7 @@ public class FilterNumericField<M extends ModelData> extends FilterField {
 
 		final HorizontalPanel hp = new HorizontalPanel();
 
-		SimpleComboBox<String> combo = new SimpleComboBox<String>();
+		I18NSimpleComboBox combo = new I18NSimpleComboBox();
 		combo.setWidth(135);
 		combo.setForceSelection(true);
 		combo.setEditable(false);
@@ -91,6 +92,15 @@ public class FilterNumericField<M extends ModelData> extends FilterField {
 		combo.add(">");
 		combo.add(">=");
 		combo.add("between");
+
+		combo.add(ResourceHelper.getResources().symbol_eq(), "is-a");
+		combo.add(ResourceHelper.getResources().symbol_ltgt(), "<>");
+		combo.add(ResourceHelper.getResources().symbol_lt(), "<");
+		combo.add(ResourceHelper.getResources().symbol_le(), "<=");
+		combo.add(ResourceHelper.getResources().symbol_gt(), ">");
+		combo.add(ResourceHelper.getResources().symbol_ge(), ">=");
+		combo.add(ResourceHelper.getResources().between(), "between");
+
 
 		combo.setSimpleValue("=");
 
@@ -123,9 +133,8 @@ public class FilterNumericField<M extends ModelData> extends FilterField {
 
 							@Override
 							public void selectionChanged(SelectionChangedEvent<M> se) {
-								if (model_.getDatas().size() > 1)
-									model_.getDatas().remove(1);
-								model_.getDatas().add(comboBox.getSelection().get(0));
+								model_.removeData(1);
+								model_.addData(comboBox.getSelection().get(0));
 
 							}
 						});
@@ -135,9 +144,8 @@ public class FilterNumericField<M extends ModelData> extends FilterField {
 							@Override
 							public void handleEvent(BaseEvent be) {
 
-								if (model_.getDatas().size() > 0)
-									model_.getDatas().remove(0);
-								model_.getDatas().add(ComboBoxHelper.getComboBoxRealValue(comboBox));
+								model_.removeData(0);
+								model_.addData(ComboBoxHelper.getComboBoxRealValue(comboBox));
 							}
 						});
 
@@ -161,9 +169,8 @@ public class FilterNumericField<M extends ModelData> extends FilterField {
 
 							@Override
 							public void handleEvent(FieldEvent be) {
-								if (model_.getDatas().size() > 1)
-									model_.getDatas().remove(1);
-								model_.getDatas().add(be.getValue());
+								model_.removeData(1);
+								model_.addData(be.getValue());
 							}
 						});
 						hp.add(nf);
@@ -193,10 +200,8 @@ public class FilterNumericField<M extends ModelData> extends FilterField {
 
 				@Override
 				public void selectionChanged(SelectionChangedEvent<M> se) {
-					if (model_.getDatas().size() > 0)
-						model_.getDatas().remove(0);
-
-					model_.getDatas().add(0, comboBox.getSelection().get(0));
+					model_.removeData(0);
+					model_.addData(0, comboBox.getSelection().get(0));
 
 				}
 			});
@@ -206,9 +211,8 @@ public class FilterNumericField<M extends ModelData> extends FilterField {
 				@Override
 				public void handleEvent(BaseEvent be) {
 
-					if (model_.getDatas().size() > 0)
-						model_.getDatas().remove(0);
-					model_.getDatas().add(ComboBoxHelper.getComboBoxRealValue(comboBox));
+					model_.removeData(0);
+					model_.addData(ComboBoxHelper.getComboBoxRealValue(comboBox));
 				}
 			});
 
@@ -232,9 +236,8 @@ public class FilterNumericField<M extends ModelData> extends FilterField {
 
 				@Override
 				public void handleEvent(FieldEvent be) {
-					if (model_.getDatas().size() > 0)
-						model_.getDatas().remove(0);
-					model_.getDatas().add(0, be.getValue());
+					model_.removeData(0);
+					model_.addData(0, be.getValue());
 				}
 			});
 			hp.add(nf);

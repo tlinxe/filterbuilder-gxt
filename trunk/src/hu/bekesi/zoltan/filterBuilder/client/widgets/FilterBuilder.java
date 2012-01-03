@@ -1,6 +1,6 @@
 /*
- * 
- *   Copyright 2011 Zoltan Bekesi
+ *
+ *   Copyright 2011 Bryn Ryans
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -17,18 +17,18 @@
  *   NOTICE THE GXT ( Ext-GWT ) LIBRARY IS A GPL v3 LICENCED PRODUCT.
  *   FIND OUT MORE ON:  http://www.sencha.com/license
  *
- *   Author : Zoltan Bekesi<bekesizoltan@gmail.com>
- * 
+ *   Author : Bryn Ryans<snayrb99@gmail.com>
+ *
  * */
 
 package hu.bekesi.zoltan.filterBuilder.client.widgets;
 
 import hu.bekesi.zoltan.filterBuilder.client.criteria.ComplexModel;
+import hu.bekesi.zoltan.filterBuilder.client.widgets.I18NSimpleComboBox.I18NSimpleComboValue;
 import hu.bekesi.zoltan.filterBuilder.client.widgets.fields.FilterField;
 
 import java.util.List;
 
-import com.extjs.gxt.ui.client.core.XTemplate;
 import com.extjs.gxt.ui.client.data.BaseListLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.Loader;
@@ -40,32 +40,49 @@ import com.extjs.gxt.ui.client.store.Store;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.google.gwt.user.client.Element;
 
 public class FilterBuilder extends VerticalPanel {
 
-	FilterPanel filterPanel;
-	Store<ModelData> store;
-	Loader<ListLoadResult<ModelData>> loader;
-	ListStore<FilterField> filterStore;
+	private FilterPanel filterPanel;
+	private Store<ModelData> store;
+	private Loader<ListLoadResult<ModelData>> loader;
+	private ListStore<FilterField> filterStore;
 
 	public FilterBuilder(List<FilterField> fields_) {
 		this(fields_, true);
 	}
 
 	public FilterBuilder(List<FilterField> fields_, boolean showButtons) {
-		this(fields_,showButtons,null);
+		this(fields_, showButtons, null, 2);
 	}
-	
-	public FilterBuilder(List<FilterField> fields_, boolean showButtons, XTemplate comboBoxTemplate) {
-	
+
+	public FilterBuilder(List<FilterField> fields_, int layoutSpacing) {
+		this(fields_, true, layoutSpacing);
+	}
+
+	public FilterBuilder(List<FilterField> fields_, boolean showButtons, int layoutSpacing) {
+		this(fields_, showButtons, null, layoutSpacing);
+	}
+
+	public FilterBuilder(List<FilterField> fields_, boolean showButtons, LeftHandFieldBuilder leftHandField) {
+		this(fields_, showButtons, leftHandField, 2);
+	}
+
+	public FilterBuilder(List<FilterField> fields_, boolean showButtons, LeftHandFieldBuilder leftHandField, int layoutSpacing) {
+		this(fields_, showButtons, leftHandField, layoutSpacing, null);
+	}
+
+	public FilterBuilder(List<FilterField> fields_, boolean showButtons, LeftHandFieldBuilder leftHandField, int layoutSpacing, List<I18NSimpleComboValue> logicalOperands) {
 
 		filterStore = new ListStore<FilterField>();
 		filterStore.add(fields_);
 		filterStore.setMonitorChanges(true);
-		filterPanel = new FilterPanel(filterStore,comboBoxTemplate);
+		filterPanel = new FilterPanel(filterStore, leftHandField, layoutSpacing, logicalOperands);
 		this.add(filterPanel);
 		if (showButtons) {
 			HorizontalPanel temp = new HorizontalPanel();
+			temp.setSpacing(layoutSpacing);
 			Button filterButton = new Button("Filter");
 			filterButton.setWidth(150);
 			filterButton
@@ -91,12 +108,13 @@ public class FilterBuilder extends VerticalPanel {
 			temp.add(clearButton);
 			this.add(temp);
 		}
+
 	}
 
 	public void clearFilter() {
 		if (loader != null) {
 			loader.load();
-		} else {
+		} else if (store != null) {
 			store.clearFilters();
 		}
 		filterPanel.setFilterExpression(new ComplexModel("AND"));
@@ -133,9 +151,14 @@ public class FilterBuilder extends VerticalPanel {
 	}
 
 	public void setFilterExpression(ComplexModel complexModel) {
-		store.clearFilters();
+		if (store != null) {
+			store.clearFilters();
+		}
 		filterPanel.setFilterExpression(complexModel);
-		store.addFilter(complexModel);
+		if (store != null) {
+			store.addFilter(complexModel);
+		}
+		filterPanel.forceLayout();
 	}
 
 	public void addField(FilterField field) {
@@ -156,6 +179,13 @@ public class FilterBuilder extends VerticalPanel {
 	public void removeField(FilterField field) {
 		filterStore.remove(field);
 		// TODO filterPanel.removeField(field);
+	}
+
+	@Override
+	protected void onRender(Element parent, int pos) {
+		super.onRender(parent, pos);
+		// HorizontalPanel sets this to visible which hides the scrollbar.
+		setStyleAttribute("overflow", "auto");
 	}
 
 }

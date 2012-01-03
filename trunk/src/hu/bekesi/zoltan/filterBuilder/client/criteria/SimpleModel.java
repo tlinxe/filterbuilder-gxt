@@ -1,5 +1,5 @@
 /*
- * 
+ *
  *   Copyright 2011 Zoltan Bekesi
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,24 +18,30 @@
  *   FIND OUT MORE ON:  http://www.sencha.com/license
  *
  *   Author : Zoltan Bekesi<bekesizoltan@gmail.com>
- * 
+ *
  * */
 
 package hu.bekesi.zoltan.filterBuilder.client.criteria;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.data.BaseModelData;
+import com.extjs.gxt.ui.client.data.ChangeEventSource;
+import com.extjs.gxt.ui.client.data.ChangeEventSupport;
+import com.extjs.gxt.ui.client.data.ChangeListener;
 import com.extjs.gxt.ui.client.data.ModelData;
+import com.extjs.gxt.ui.client.data.PropertyChangeEvent;
 import com.extjs.gxt.ui.client.store.Store;
+import com.extjs.gxt.ui.client.util.Util;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class SimpleModel extends BaseModelData implements FilterModel,IsSerializable, Serializable {
 
 	private static final long serialVersionUID = 6628883511737728991L;
-
+	private transient ChangeEventSupport changeEventSupport;
 
 	public String getOp() {
 		return get("op");
@@ -44,7 +50,7 @@ public class SimpleModel extends BaseModelData implements FilterModel,IsSerializ
 	public void setOp(String op) {
 		set("op", op);
 	}
-	
+
 //	public FilterField getField() {
 //		return get("field");
 //	}
@@ -60,68 +66,79 @@ public class SimpleModel extends BaseModelData implements FilterModel,IsSerializ
 	public void setValueField(String field) {
 		set("field", field);
 	}
-	
-	public List<Object> getDatas() {
-		return get("datas");
+
+	public void addData(int idx, Object data) {
+		List<Object> datas = get("datas");
+		if (datas == null) {
+			datas = new ArrayList<Object>();
+			datas.add(data);
+			set("datas", datas);
+			notify("datas", null, datas);
+		}
+		else {
+			datas.add(idx, data);
+			notify("datas", null, datas);
+		}
 	}
 
-	public void setDatas(List<Object> datas) {
-		set("datas", datas);
+	public void addData(Object data) {
+		List<Object> datas = get("datas");
+		if (datas == null) {
+			datas = new ArrayList<Object>();
+			datas.add(data);
+			set("datas", datas);
+			notify("datas", null, datas);
+		}
+		else {
+			datas.add(data);
+			notify("datas", null, datas);
+		}
+	}
+
+	public void removeData(int idx) {
+		List<Object> datas = get("datas");
+		if (datas != null && idx < datas.size()) {
+			Object data = datas.remove(idx);
+			notify("datas", data, null);
+		}
+	}
+
+	public List<Object> getDataList() {
+		List<Object> datas = get("datas");
+		return Collections.unmodifiableList(datas == null ?  Collections.emptyList() : datas);
 	}
 
 	public SimpleModel() {
-		setDatas(new ArrayList<Object>());
 	}
-
-//	public SimpleModel(FilterField field) {
-//		setDatas(new ArrayList<Object>());
-//		setValueField(field);
-//	}
-//
-//	public SimpleModel(FilterField field, String op, Object data) {
-//		setDatas(new ArrayList<Object>());
-//		getDatas().add(data);
-//		setValueField(field);
-//		setOp(op);
-//	}
-//
-//	public SimpleModel(FilterField field, String op, List<Object> data) {
-//		setDatas(data);
-//		setValueField(field);
-//		setOp(op);
-//	}
 
 	public SimpleModel(String valueField) {
-		setDatas(new ArrayList<Object>());
 		setValueField(valueField);
 	}
 
-//	public SimpleModel(String field, FilterOperator op, Object data) {
-//		setDatas(new ArrayList<Object>());
-//		getDatas().add(data);
-//		setField(field);
-//		setOp(op);
-//	}
-//
-//	public SimpleModel(String field, FilterOperator op, List<Object> data) {
-//		setDatas(data);
-//		setField(field);
-//		setOp(op);
-//	}
-	
 	public SimpleModel(String valueField, String op, Object data) {
-		setDatas(new ArrayList<Object>());
-		getDatas().add(data);
+		addData(data);
 		setValueField(valueField);
 		setOp(op);
 	}
 
-	public SimpleModel(String valueField, String op, List<Object> data) {
-		setDatas(data);
+	public SimpleModel(String valueField, String op, List<Object> datas) {
+		for (Object data : datas) {
+			addData(data);
+		}
 		setValueField(valueField);
 		setOp(op);
 	}
-	
+
+	/**
+	 * @see com.extjs.gxt.ui.client.data.BaseModelData#set(java.lang.String, java.lang.Object)
+	 */
+	@Override
+	public <X> X set(String property, X value) {
+		X oldValue = super.set(property, value);
+		notify(property, oldValue, value);
+		return oldValue;
+	}
+
 	@Override
 	public boolean filter(ModelData model) {
 		return false;
@@ -162,40 +179,79 @@ public class SimpleModel extends BaseModelData implements FilterModel,IsSerializ
 //			return ((Number) item.get(getField())).doubleValue() > ((Number) getDatas().get(0)).doubleValue()
 //					&& ((Number) item.get(getField())).doubleValue() < ((Number) getDatas().get(1)).doubleValue();
 //		}
-		if (getOp().compareTo("contains") == 0) {
-			return item.get(getValueField()).toString().contains(getDatas().get(0).toString());
-		} else if (getOp().compareTo("does not contain") == 0) {
-			return !item.get(getValueField()).toString().contains(getDatas().get(0).toString());
-		} else if (getOp().compareTo("does not end with") == 0) {
-			return !item.get(getValueField()).toString().endsWith(getDatas().get(0).toString());
-		} else if (getOp().compareTo("does not start with") == 0) {
-			return !item.get(getValueField()).toString().startsWith(getDatas().get(0).toString());
-		} else if (getOp().compareTo("starts with") == 0) {
-			return item.get(getValueField()).toString().startsWith(getDatas().get(0).toString());
-		} else if (getOp().compareTo("ends with") == 0) {
-			return item.get(getValueField()).toString().endsWith(getDatas().get(0).toString());
-		} else if (getOp().compareTo("equals") == 0) {
-			return item.get(getValueField()).toString().equals(getDatas().get(0).toString());
-		} else if (getOp().compareTo("not equals") == 0) {
-			return !item.get(getValueField()).toString().equals(getDatas().get(0).toString());
-		} else if (getOp().compareTo("==") == 0) {
-			return ((Number) item.get(getValueField())).doubleValue() == (((Number) getDatas().get(0))).doubleValue();
-		} else if (getOp().compareTo(">") == 0) {
-			return ((Number) item.get(getValueField())).doubleValue() > ((Number) getDatas().get(0)).doubleValue();
-		} else if (getOp().compareTo(">=") == 0) {
-			return ((Number) item.get(getValueField())).doubleValue() >= ((Number) getDatas().get(0)).doubleValue();
-		} else if (getOp().compareTo("!=") == 0) {
-			return ((Number) item.get(getValueField())).doubleValue() == (((Number) getDatas().get(0))).doubleValue();
-		} else if (getOp().compareTo("<") == 0) {
-			return ((Number) item.get(getValueField())).doubleValue() < ((Number) getDatas().get(0)).doubleValue();
-		} else if (getOp().compareTo("<=") == 0) {
-			return ((Number) item.get(getValueField())).doubleValue() <= ((Number) getDatas().get(0)).doubleValue();
-		} else if (getOp().compareTo("between") == 0) {
-			return ((Number) item.get(getValueField())).doubleValue() > ((Number) getDatas().get(0)).doubleValue()
-					&& ((Number) item.get(getValueField())).doubleValue() < ((Number) getDatas().get(1)).doubleValue();
+		List<Object> dataList = getDataList();
+		Object o = dataList.size() == 0 ? null : dataList.get(0);
+		String rhv = "";
+		double nrhv1 = 0;
+		if (o instanceof Number) {
+			nrhv1 = ((Number) o).doubleValue();
 		}
-		
+		else if (o != null) {
+			rhv = o.toString();
+		}
+		o = dataList.size() < 2 ? null : dataList.get(1);
+		double nrhv2 = o instanceof Number ? ((Number) o).doubleValue() : 0;
+		if (getOp().compareTo("contains") == 0) {
+			return item.get(getValueField()).toString().contains(rhv);
+		} else if (getOp().compareTo("does not contain") == 0) {
+			return !item.get(getValueField()).toString().contains(rhv);
+		} else if (getOp().compareTo("does not end with") == 0) {
+			return !item.get(getValueField()).toString().endsWith(rhv);
+		} else if (getOp().compareTo("does not start with") == 0) {
+			return !item.get(getValueField()).toString().startsWith(rhv);
+		} else if (getOp().compareTo("starts with") == 0) {
+			return item.get(getValueField()).toString().startsWith(rhv);
+		} else if (getOp().compareTo("ends with") == 0) {
+			return item.get(getValueField()).toString().endsWith(rhv);
+		} else if (getOp().compareTo("equals") == 0) {
+			return item.get(getValueField()).toString().equals(rhv);
+		} else if (getOp().compareTo("not equals") == 0) {
+			return !item.get(getValueField()).toString().equals(rhv);
+		} else if (getOp().compareTo("==") == 0) {
+			return ((Number) item.get(getValueField())).doubleValue() == nrhv1;
+		} else if (getOp().compareTo(">") == 0) {
+			return ((Number) item.get(getValueField())).doubleValue() > nrhv1;
+		} else if (getOp().compareTo(">=") == 0) {
+			return ((Number) item.get(getValueField())).doubleValue() >= nrhv1;
+		} else if (getOp().compareTo("!=") == 0) {
+			return ((Number) item.get(getValueField())).doubleValue() == nrhv1;
+		} else if (getOp().compareTo("<") == 0) {
+			return ((Number) item.get(getValueField())).doubleValue() < nrhv1;
+		} else if (getOp().compareTo("<=") == 0) {
+			return ((Number) item.get(getValueField())).doubleValue() <= nrhv1;
+		} else if (getOp().compareTo("between") == 0) {
+			return ((Number) item.get(getValueField())).doubleValue() > nrhv1
+					&& ((Number) item.get(getValueField())).doubleValue() < nrhv2;
+		}
+
 		return false;
+	}
+
+	@Override
+	public void setChangeEventSupport(ChangeEventSupport changeEventSupport) {
+		this.changeEventSupport = changeEventSupport;
+	}
+
+	public void addChangeListener(ChangeListener... listener) {
+		if (changeEventSupport == null) {
+			changeEventSupport = new ChangeEventSupport();
+		}
+		changeEventSupport.addChangeListener(listener);
+	}
+
+	public void removeChangeListener(ChangeListener... listener) {
+		if (changeEventSupport != null) {
+			changeEventSupport.removeChangeListener(listener);
+		}
+	}
+
+	private void notify(String property, Object oldValue, Object newValue) {
+		if (changeEventSupport != null) {
+			if (!Util.equalWithNull(oldValue, newValue)) {
+				PropertyChangeEvent event = new PropertyChangeEvent(ChangeEventSource.Update, null, property, oldValue, newValue);
+				changeEventSupport.notify(event);
+			}
+		}
 	}
 
 }

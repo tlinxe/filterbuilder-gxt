@@ -1,5 +1,5 @@
 /*
- * 
+ *
  *   Copyright 2011 Zoltan Bekesi
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,17 +18,22 @@
  *   FIND OUT MORE ON:  http://www.sencha.com/license
  *
  *   Author : Zoltan Bekesi<bekesizoltan@gmail.com>
- * 
+ *
  * */
 
 package hu.bekesi.zoltan.filterBuilder.client.criteria;
 
 import java.io.Serializable;
 
+import com.extjs.gxt.ui.client.data.ChangeEventSupport;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.store.StoreFilter;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public interface FilterModel extends StoreFilter<ModelData>, IsSerializable, Serializable{
- public boolean filter(ModelData model);
+
+	boolean filter(ModelData model);
+
+	void setChangeEventSupport(ChangeEventSupport changeEventSupport);
+
 }

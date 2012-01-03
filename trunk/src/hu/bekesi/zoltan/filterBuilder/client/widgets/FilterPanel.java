@@ -1,5 +1,5 @@
 /*
- * 
+ *
  *   Copyright 2011 Zoltan Bekesi
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,8 +17,8 @@
  *   NOTICE THE GXT ( Ext-GWT ) LIBRARY IS A GPL v3 LICENCED PRODUCT.
  *   FIND OUT MORE ON:  http://www.sencha.com/license
  *
- *   Author : Zoltan Bekesi<bekesizoltan@gmail.com>
- * 
+ * Author : Zoltan Bekesi<bekesizoltan@gmail.com>
+ *
  * */
 
 package hu.bekesi.zoltan.filterBuilder.client.widgets;
@@ -27,13 +27,14 @@ import hu.bekesi.zoltan.filterBuilder.client.criteria.ComplexModel;
 import hu.bekesi.zoltan.filterBuilder.client.criteria.FilterModel;
 import hu.bekesi.zoltan.filterBuilder.client.criteria.SimpleModel;
 import hu.bekesi.zoltan.filterBuilder.client.icons.FilterBuilderIcons;
+import hu.bekesi.zoltan.filterBuilder.client.resources.ResourceHelper;
+import hu.bekesi.zoltan.filterBuilder.client.widgets.I18NSimpleComboBox.I18NSimpleComboValue;
 import hu.bekesi.zoltan.filterBuilder.client.widgets.fields.FilterField;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.VerticalAlignment;
-import com.extjs.gxt.ui.client.core.XTemplate;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
@@ -42,10 +43,8 @@ import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
-import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
 import com.extjs.gxt.ui.client.widget.form.ComboBox.TriggerAction;
-import com.extjs.gxt.ui.client.widget.layout.TableData;
+import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -53,48 +52,72 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 
 	public static final FilterBuilderIcons ICONS = GWT.create(FilterBuilderIcons.class);
 
-	// List<FilterField> fields;
-	ListStore<FilterField> _store;
+	private ListStore<FilterField> _store;
+	private FilterPanel parent;
+	private HorizontalPanel horizontalPanel;
+	private VerticalPanel verticalPanel;
+	private I18NSimpleComboBox combo;
+	private ComplexModel _model;
+	private LeftHandFieldBuilder leftHandField;
+	private List<I18NSimpleComboValue> logicalOperands;
 
-	FilterPanel parent;
-
-	HorizontalPanel horizontalPanel;
-	VerticalPanel verticalPanel;
-
-	SimpleComboBox<String> combo;
-
-	// ComplexModel model = new ComplexModel(BinaryOperator.AND);
-	ComplexModel model = new ComplexModel("AND");
-
-	XTemplate _comboBoxTemplate;
+	int layoutSpacing;
 
 	public void forceLayout() {
-		this.layout(true);
-		this.horizontalPanel.layout(true);
-		// this.repaint();
 
 		if (this.parent != null) {
 			parent.forceLayout();
 		}
+		else {
+			this.layout(true);
+			this.horizontalPanel.layout(true);
+		}
+
 	}
 
-	public FilterPanel(ListStore<FilterField> store, XTemplate comboBoxTemplate) {
-		this(null, store, comboBoxTemplate);
+	public FilterPanel(ListStore<FilterField> store, LeftHandFieldBuilder leftHandField) {
+		this(null, store, leftHandField, 0, null, null);
+	}
+
+	public FilterPanel(ListStore<FilterField> store, LeftHandFieldBuilder leftHandField, int layoutSpacing) {
+		this(null, store, leftHandField, layoutSpacing, null, null);
+	}
+
+	public FilterPanel(ListStore<FilterField> store, LeftHandFieldBuilder leftHandField, int layoutSpacing, List<I18NSimpleComboValue> logicalOperands) {
+		this(null, store, leftHandField, layoutSpacing, logicalOperands, null);
 	}
 
 	public void removeFilter(Widget widget) {
 		verticalPanel.remove(widget);
-		model.getSubFilters().remove(((Filter) widget).getFilterModel());
+		_model.removeSubFilter(((Filter) widget).getFilterModel());
 	}
 
-	FilterPanel(FilterPanel parent_, ListStore<FilterField> store, final XTemplate comboBoxTemplate) {
+	FilterPanel(FilterPanel parent_, ListStore<FilterField> store, LeftHandFieldBuilder leftHandField, int layoutSpacing, List<I18NSimpleComboValue> logicalOperands, ComplexModel model) {
+		_model = model == null ? new ComplexModel("AND") : model;
+		this.layoutSpacing = layoutSpacing;
 		_store = store;
 		this.parent = parent_;
-		_comboBoxTemplate = comboBoxTemplate;
+		if (leftHandField == null) {
+			this.leftHandField = new DefaultLeftHandFieldBuilder(null);
+		}
+		else {
+			this.leftHandField = leftHandField;
+		}
+		if (logicalOperands == null) {
+			this.logicalOperands = new ArrayList<I18NSimpleComboValue>();
+			this.logicalOperands.add(new I18NSimpleComboValue(ResourceHelper.getResources().and(), "AND"));
+			this.logicalOperands.add(new I18NSimpleComboValue(ResourceHelper.getResources().or(), "OR"));
+			this.logicalOperands.add(new I18NSimpleComboValue(ResourceHelper.getResources().nand(), "NAND"));
+			this.logicalOperands.add(new I18NSimpleComboValue(ResourceHelper.getResources().nor(), "NOR"));
+		}
+		else {
+			this.logicalOperands = logicalOperands;
+		}
 
 		setVerticalAlign(VerticalAlignment.MIDDLE);
 
 		horizontalPanel = new HorizontalPanel();
+		horizontalPanel.setSpacing(layoutSpacing);
 
 		if (parent != null) {
 			Button minus = new Button();// "-");
@@ -106,22 +129,18 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 				public void componentSelected(ButtonEvent ce) {
 					parent.removeFilter(FilterPanel.this);
 					FilterPanel.this.forceLayout();
-					parent.getFilterModel().getSubFilters().remove(model);
+					parent.getFilterModel().removeSubFilter(_model);
 				}
 			});
 		}
 
-		combo = new SimpleComboBox<String>();
+		combo = new I18NSimpleComboBox();
 		combo.setWidth(55);
 		combo.setForceSelection(true);
 		combo.setTriggerAction(TriggerAction.ALL);
-		combo.add("AND");
-		combo.add("OR");
-		// combo.add("NOT");
-		combo.add("NAND");
-		combo.add("NOR");
+		combo.addValues(this.logicalOperands);
 
-		combo.setSimpleValue("AND");
+		combo.setSimpleValue((String) this.logicalOperands.get(0).get("value"));
 		// combo.add(BinaryOperator.stringValues());
 
 		combo.addSelectionChangedListener(new SelectionChangedListener<SimpleComboValue<String>>() {
@@ -129,29 +148,32 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 			@Override
 			public void selectionChanged(SelectionChangedEvent<SimpleComboValue<String>> se) {
 				// model.setOperator(BinaryOperator.getOp(se.getSelectedItem().getValue()));
-				model.setOperator(se.getSelectedItem().getValue());
+				_model.setOperator(se.getSelectedItem().getValue());
 			}
 		});
 
 		horizontalPanel.add(combo);
 
 		verticalPanel = new VerticalPanel();
-		SimplePanel sp = new SimplePanel(verticalPanel, FilterPanel.this, _store, _comboBoxTemplate);
+		verticalPanel.setSpacing(layoutSpacing);
+		SimplePanel sp = new SimplePanel(verticalPanel, FilterPanel.this, _store, this.leftHandField);
 		verticalPanel.add(sp);
-		model.getSubFilters().add(sp.getFilterModel());
+		_model.addSubFilter(sp.getFilterModel());
 
-		verticalPanel.addStyleName("leftborder");
+		// Namespace CSS styles.
+		verticalPanel.addStyleName("fb-leftborder");
 
 		HorizontalPanel hp = new HorizontalPanel();
+		hp.setSpacing(layoutSpacing);
 
 		Button plus = new Button();// "+");
 		plus.setIcon(ICONS.add());
 		plus.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				SimplePanel sp = new SimplePanel(verticalPanel, FilterPanel.this, _store, _comboBoxTemplate);
+				SimplePanel sp = new SimplePanel(verticalPanel, FilterPanel.this, _store, FilterPanel.this.leftHandField);
 				verticalPanel.insert(sp, verticalPanel.getItemCount() - 1);
-				model.getSubFilters().add(sp.getFilterModel());
+				_model.addSubFilter(sp.getFilterModel());
 				FilterPanel.this.forceLayout();
 			}
 		});
@@ -164,11 +186,11 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				FilterPanel fp = new FilterPanel(FilterPanel.this, _store, _comboBoxTemplate);
+				FilterPanel fp = new FilterPanel(FilterPanel.this, _store, FilterPanel.this.leftHandField, FilterPanel.this.layoutSpacing, FilterPanel.this.logicalOperands, null);
 				verticalPanel.insert(fp, verticalPanel.getItemCount() - 1);
-				model.getSubFilters().add(fp.getFilterModel());
+				_model.addSubFilter(fp.getFilterModel());
+				verticalPanel.scrollIntoView(fp);
 				FilterPanel.this.forceLayout();
-
 			}
 		});
 
@@ -182,34 +204,34 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 
 	@Override
 	public ComplexModel getFilterModel() {
-		return model;
+		return _model;
 	}
 
 	@Override
 	public void setFilterExpression(FilterModel filterModel) {
-		model = (ComplexModel) filterModel;
+		_model = (ComplexModel) filterModel;
 
 		while (verticalPanel.getItemCount() > 1)
 			verticalPanel.remove(verticalPanel.getWidget(0));
 
-		SimpleComboValue<String> val = combo.getStore().findModel("value", model.getOperator());
+		SimpleComboValue<String> val = combo.getStore().findModel("value", _model.getOperator());
 		combo.select(val);
 		ArrayList<SimpleComboValue<String>> selection2 = new ArrayList<SimpleComboValue<String>>();
 		selection2.add(val);
 		combo.setSelection(selection2);
 
-		for (FilterModel filterM : model.getSubFilters()) {
+		for (FilterModel filterM : _model.getSubFilters()) {
 			if (filterM instanceof SimpleModel) {
-				SimplePanel simplePanel = new SimplePanel(verticalPanel, FilterPanel.this, _store, _comboBoxTemplate);
+				SimplePanel simplePanel = new SimplePanel(verticalPanel, FilterPanel.this, _store, FilterPanel.this.leftHandField, (SimpleModel) filterM);
 				verticalPanel.insert(simplePanel, verticalPanel.getItemCount() - 1);
 				simplePanel.setFilterExpression(filterM);
 			} else if (filterM instanceof ComplexModel) {
-				FilterPanel fp = new FilterPanel(FilterPanel.this, _store, _comboBoxTemplate);
+				FilterPanel fp = new FilterPanel(FilterPanel.this, _store, FilterPanel.this.leftHandField, FilterPanel.this.layoutSpacing, FilterPanel.this.logicalOperands, (ComplexModel) filterM);
 				verticalPanel.insert(fp, verticalPanel.getItemCount() - 1);
 				fp.setFilterExpression(filterM);
 			}
 		}
-		FilterPanel.this.forceLayout();
+//		FilterPanel.this.forceLayout();
 		combo.focus();
 
 	}
@@ -218,7 +240,7 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 	 * @Override public void addField(FilterField field) { fields.add(field);
 	 * for (int i = 0; i < verticalPanel.getItemCount() - 1; i++) { ((Filter)
 	 * verticalPanel.getItem(i)).addField(field); }
-	 * 
+	 *
 	 * }
 	 */
 
@@ -258,7 +280,7 @@ public class FilterPanel extends HorizontalPanel implements Filter {
 	// for (int i = 0; i < verticalPanel.getItemCount() - 1; i++) {
 	// ((Filter) verticalPanel.getItem(i)).updateField(id);
 	// }
-	//		
+	//
 	// }
 
 }
