@@ -17,11 +17,11 @@
 
 /*    NOTICE THE GXT ( Ext-GWT ) LIBRARY IS A GPL v3 LICENCED PRODUCT. */
 /*    FIND OUT MORE ON:  http://www.sencha.com/license */
- 
+
 /*  Author : Zoltan Bekesi<bekesizoltan@gmail.com> */
 
 
-.leftborder{ 
+.fb-leftborder{
 	border-left: 1px black solid;
 	margin-top: 3px;
 	margin-bottom: 3px;
